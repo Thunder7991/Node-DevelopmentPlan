@@ -4,7 +4,7 @@ const userController = require("../controller/userController");
 
 const validator = require("../middleware/validator/userValidator");
 
-/* GET users listing. */
+/* GET users listing. */  
 router
   .post("/register", validator.register, userController.register)
   .get("/list", userController.list)

@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
         set: value => md5(value),
-        select:false
+        select:false //查询过程中去掉password字段
     },
     phone:{
         type:String,

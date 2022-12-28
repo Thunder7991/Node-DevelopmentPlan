@@ -1,5 +1,5 @@
 const {body} = require("express-validator")
-const User = require("../../model/index")
+const {User} = require("../../model/index")
 const validate = require("./errorBack")
 module.exports.register = validate([
     body('username')
@@ -25,4 +25,15 @@ module.exports.register = validate([
     body('password')
       .notEmpty().withMessage('密码不能为空').bail()
       .isLength({ min: 5 }).withMessage('用户名长度不能小于5').bail(),
+  ])
+
+  module.exports.login = validate([
+    body('email')
+      .notEmpty().withMessage('邮箱不能为空').bail()
+      .isEmail().withMessage('邮箱格式不正确').bail(),
+      body('password')
+      .notEmpty().withMessage('密码不能为空').bail(),
+      
+      
+  
   ])

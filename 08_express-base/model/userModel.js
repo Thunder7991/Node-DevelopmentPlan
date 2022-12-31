@@ -24,6 +24,16 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:null
     },
+    //当前用户频道信息
+    cover:{ //封面
+       type:String,
+       default:null 
+    },
+    channeldes:{//频道描述
+        type:String,
+        default:null
+    },
+
   ...baseModel
 
 })

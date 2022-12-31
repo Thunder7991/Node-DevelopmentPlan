@@ -39,7 +39,35 @@ module.exports.register = validate([
       }).bail(),
       body('password')
       .notEmpty().withMessage('密码不能为空').bail(),
-      
-      
-  
+    
+  ])
+
+
+  module.exports.update = validate([
+    body('email')
+      .custom(async val => {
+        const emailValidate = await User.findOne({ email: val })
+        if (emailValidate) {
+          return Promise.reject('邮箱已经注册!')
+        }
+      }).bail(),
+
+      body('username')
+      .custom(async val => {
+        const userValidate = await User.findOne({ username: val })
+        if (userValidate) {
+          return Promise.reject('用户名已经被注册!')
+        }
+      }).bail(),
+
+      body('phone')
+      .custom(async val => {
+        const phoneValidate = await User.findOne({ phone: val })
+        if (phoneValidate) {
+          return Promise.reject('手机号已经被注册!')
+        }
+      }).bail(),
+ 
+ 
+    
   ])

@@ -7,7 +7,9 @@ const { uuid } = require("../config/config.default");
 module.exports.verifyToken = async (req, res, next) => {
   //获取头信息
   let token = req.headers.authorization;
+
   token = token ? token.split("Bearer ")[1] : null;
+ 
   if (!token) {
     res.status(402).json({ error: "请传入token" });
   }

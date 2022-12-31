@@ -25,5 +25,6 @@ exports.login = async (req, res) => {
 };
 
 exports.list = async (req, res, next) => {
+  console.log(req);
   res.send("respond with a resource");
 };

@@ -30,7 +30,13 @@ module.exports.register = validate([
   module.exports.login = validate([
     body('email')
       .notEmpty().withMessage('邮箱不能为空').bail()
-      .isEmail().withMessage('邮箱格式不正确').bail(),
+      .isEmail().withMessage('邮箱格式不正确').bail()
+      .custom(async val => {
+        const emailValidate = await User.findOne({ email: val })
+        if (!emailValidate) {
+          return Promise.reject('邮箱未注册')
+        }
+      }).bail(),
       body('password')
       .notEmpty().withMessage('密码不能为空').bail(),
       

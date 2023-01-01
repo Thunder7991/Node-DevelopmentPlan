@@ -16,7 +16,7 @@ exports.getvod = async (req, res) => {
   // 请求示例
   var client = initVodClient(
     "LTAI5t9E91CjMewUdCZD79Vt",
-    "f722ZXzMUQl***************"
+    "******************"
   );
  const vodback =  await client.request(
     "CreateUploadVideo",

@@ -5,7 +5,7 @@ const vodController = require("../controller/vodController");
 const { verifyToken } = require("../util/jwt");
 const  {videoValidator} = require("../middleware/validator/videoValidator");
 router
-  .get("/lists", videoController.list)
+  .get("/videolist", videoController.videolist)
   .get("/getvod", vodController.getvod)
   .post("/createvideo", verifyToken, videoValidator, videoController.createVideo)
 

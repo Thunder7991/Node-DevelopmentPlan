@@ -5,8 +5,9 @@ const vodController = require("../controller/vodController");
 const { verifyToken } = require("../util/jwt");
 const  {videoValidator} = require("../middleware/validator/videoValidator");
 router
-  .get("/videolist", videoController.videolist)
-  .get("/getvod", vodController.getvod)
-  .post("/createvideo", verifyToken, videoValidator, videoController.createVideo)
+  .get("/videolist",verifyToken(), videoController.videolist)
+  .get("/detail/:videoId",verifyToken(), videoController.video)
+  .get("/getvod",verifyToken(), vodController.getvod)
+  .post("/createvideo", verifyToken(), videoValidator, videoController.createVideo)
 
 module.exports = router;

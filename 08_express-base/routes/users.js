@@ -12,11 +12,11 @@ router
   .post("/registers", validator.register, userController.register)
   .post("/logins", validator.login, userController.login)
 
-  .get("/lists", verifyToken, userController.list)
+  .get("/lists", verifyToken(), userController.list)
   //修改用户信息
-  .put("/", verifyToken, validator.update, userController.update)
+  .put("/", verifyToken(), validator.update, userController.update)
   //上传文件
-  .post("/headimg", verifyToken,upload.single('headimg'), userController.headimg)
+  .post("/headimg", verifyToken(),upload.single('headimg'), userController.headimg)
 
   .delete("/", userController.delete);
 

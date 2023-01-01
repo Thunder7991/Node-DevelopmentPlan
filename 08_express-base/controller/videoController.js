@@ -3,14 +3,11 @@ const { Video } = require("../model/index");
 
 exports.videolist = async (req, res) => {
   let { pageNum = 1, pageSize = 10 } = req.body;
-  //   console.log(req.method);
-  //   res.send("/video-list");
   let getVideoList = await Video.find()
     .skip((pageNum - 1) * pageSize)
     .limit(pageSize)
     .sort({createAt:-1})
-    // .populate('user')
-
+    .populate('user','_id username cover')
     //获取数据条数
    const total = await Video.countDocuments()
    res.status(200).json({data:getVideoList,total})
@@ -30,3 +27,11 @@ exports.createVideo = async (req, res) => {
 
   res.send(req.body);
 };
+
+exports.video = async(req,res) => {
+    const {videoId} = req.params
+   let videoInfo = await Video
+   .findById(videoId)
+   .populate('user','_id username cover')
+    res.status(200).json(videoInfo)
+}

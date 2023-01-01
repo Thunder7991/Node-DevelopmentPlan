@@ -18,6 +18,11 @@ router
   //上传文件
   .post("/headimg", verifyToken(),upload.single('headimg'), userController.headimg)
 
-  .delete("/", userController.delete);
+  .delete("/", userController.delete)
+  //订阅
+  .get("/subscribe/:userId", verifyToken(),userController.subscribe)
+  //取消订订阅
+  .get("/unsubscribe/:userId", verifyToken(),userController.unsubscribe)
+
 
 module.exports = router;

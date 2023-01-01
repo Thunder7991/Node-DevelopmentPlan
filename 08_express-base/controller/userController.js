@@ -1,4 +1,4 @@
-const { User } = require("../model/index");
+const { User, Subscribe } = require("../model/index");
 const { createToken } = require("../util/jwt");
 const fs = require("fs/promises");
 const rename = fs.rename;
@@ -64,15 +64,74 @@ exports.headimg = async (req, res) => {
     );
     res.status(201).json({
       filename,
-      filepath:filename + "." + fileType
-    })
+      filepath: filename + "." + fileType,
+    });
   } catch (error) {
     res.status(500).json({
-      err:error
-    })
+      err: error,
+    });
   }
 };
 exports.list = async (req, res, next) => {
   console.log(req);
   res.send("respond with a resource");
 };
+
+//用户订阅 关注
+exports.subscribe = async (req, res) => {
+  const userId = req.user.userinfo._id;
+  const channelId = req.params.userId;
+  console.log(userId=== channelId);
+  if (userId === channelId) {
+  return res.status(401).json({ err: "不能关注自己" });
+  }
+  //获取记录
+  let record = await Subscribe.findOne({
+    user: userId,
+    channel: channelId,
+  });
+
+  if (!record) {
+    await new Subscribe({
+      user: userId,
+      channel: channelId,
+    }).save();
+
+    const user = await User.findById(channelId);
+    user.subscribeCount++;
+    await user.save();
+    res.status(200).json({ msg: "关注成功!" });
+  } else {
+    res.status(401).json({
+      err: "已经订阅此频道"
+    });
+  }
+};
+
+//取消订阅
+exports.unsubscribe =  async(req,res) => {
+  const userId = req.user.userinfo._id;
+  const channelId = req.params.userId;
+  console.log(userId=== channelId);
+  if (userId === channelId) {
+  return res.status(401).json({ err: "不能取消关注自己" });
+  }
+  //判断是否关注过
+  let record = await Subscribe.findOne({
+    user: userId,
+    channel: channelId,
+  });
+
+  if (record) {
+   await record.remove()
+
+    const user = await User.findById(channelId);
+    user.subscribeCount--
+    await user.save();
+    res.status(200).json({msg:"取消关注成功"});
+  } else {
+    res.status(401).json({
+      err: "没有订阅此频道"
+    });
+  }
+}

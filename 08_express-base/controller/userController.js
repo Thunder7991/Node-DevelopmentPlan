@@ -1,7 +1,9 @@
 const { User, Subscribe } = require("../model/index");
 const { createToken } = require("../util/jwt");
 const fs = require("fs/promises");
+const { pick } = require("lodash");
 const rename = fs.rename;
+
 exports.delete = async (req, res) => {};
 //用户注册
 exports.register = async (req, res) => {
@@ -81,9 +83,9 @@ exports.list = async (req, res, next) => {
 exports.subscribe = async (req, res) => {
   const userId = req.user.userinfo._id;
   const channelId = req.params.userId;
-  console.log(userId=== channelId);
+  console.log(userId === channelId);
   if (userId === channelId) {
-  return res.status(401).json({ err: "不能关注自己" });
+    return res.status(401).json({ err: "不能关注自己" });
   }
   //获取记录
   let record = await Subscribe.findOne({
@@ -103,18 +105,18 @@ exports.subscribe = async (req, res) => {
     res.status(200).json({ msg: "关注成功!" });
   } else {
     res.status(401).json({
-      err: "已经订阅此频道"
+      err: "已经订阅此频道",
     });
   }
 };
 
 //取消订阅
-exports.unsubscribe =  async(req,res) => {
+exports.unsubscribe = async (req, res) => {
   const userId = req.user.userinfo._id;
   const channelId = req.params.userId;
-  console.log(userId=== channelId);
+  console.log(userId === channelId);
   if (userId === channelId) {
-  return res.status(401).json({ err: "不能取消关注自己" });
+    return res.status(401).json({ err: "不能取消关注自己" });
   }
   //判断是否关注过
   let record = await Subscribe.findOne({
@@ -123,15 +125,42 @@ exports.unsubscribe =  async(req,res) => {
   });
 
   if (record) {
-   await record.remove()
+    await record.remove();
 
     const user = await User.findById(channelId);
-    user.subscribeCount--
+    user.subscribeCount--;
     await user.save();
-    res.status(200).json({msg:"取消关注成功"});
+    res.status(200).json({ msg: "取消关注成功" });
   } else {
     res.status(401).json({
-      err: "没有订阅此频道"
+      err: "没有订阅此频道",
     });
   }
-}
+};
+
+//获取频道详情
+exports.getChannel = async (req, res) => {
+  let isSubscribe = false;
+  if (req.user) {
+    const record = await Subscribe.findOne({
+      channel: req.params.userId, //查找的用户是否关注过
+      user: req.user.userinfo._id,
+    });
+    if (record) {
+      isSubscribe = true;
+    }
+  }
+  const user = await User.findById(req.params.userId);
+  user.isSubscribe = isSubscribe;
+  res.status(200).json({
+    user: pick(user, [
+      "_id",
+      "username",
+      "image",
+      "subscribeCount",
+      "channeldes",
+      "cover",
+    ]),
+    isSubscribe,
+  });
+};

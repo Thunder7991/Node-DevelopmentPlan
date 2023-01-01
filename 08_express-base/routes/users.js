@@ -23,6 +23,9 @@ router
   .get("/subscribe/:userId", verifyToken(),userController.subscribe)
   //取消订订阅
   .get("/unsubscribe/:userId", verifyToken(),userController.unsubscribe)
+  //获取频道信息
+  .get("/getchannel/:userId", verifyToken(false),userController.getChannel)
+
 
 
 module.exports = router;

@@ -14,7 +14,8 @@ main()
   });
 
   module.exports = {
-    User:mongoose.model('User',require('./userModel.js'))
+    User:mongoose.model('User',require('./userModel.js')),
+    Video:mongoose.model("Video",require('./videoModel.js'))
   }
 
 // //创建集合

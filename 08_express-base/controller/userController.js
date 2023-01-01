@@ -164,3 +164,37 @@ exports.getChannel = async (req, res) => {
     isSubscribe,
   });
 };
+//获取关注列表
+exports.getsubscribelist = async(req,res) => {
+ let subscribeList =  await Subscribe.find({
+    user:req.params.userId
+  }).populate("channel")
+  subscribeList = subscribeList.map(item => {
+   return pick(item.channel,[
+      "_id",
+      "username",
+      "image",
+      "subscribeCount",
+      "channeldes",
+      "cover",
+    ])
+  })
+  res.status(200).json({data:subscribeList})
+}
+//获取粉丝列表
+exports.getfanslist = async(req,res) => {
+  let fansList =  await Subscribe.find({
+    channel:req.user.userinfo._id
+   }).populate("user")
+   fansList = fansList.map(item => {
+    return pick(item.user,[
+       "_id",
+       "username",
+       "image",
+       "subscribeCount",
+       "channeldes",
+       "cover",
+     ])
+   })
+   res.status(200).json({data:fansList})
+ }

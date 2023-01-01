@@ -25,6 +25,11 @@ router
   .get("/unsubscribe/:userId", verifyToken(),userController.unsubscribe)
   //获取频道信息
   .get("/getchannel/:userId", verifyToken(false),userController.getChannel)
+  //获取关注列表
+  .get("/getsubscribelist/:userId",verifyToken(false),userController.getsubscribelist)
+  //获取粉丝列表
+  .get("/getfanslist/:userId",verifyToken(false),userController.getfanslist)
+
 
 
 

@@ -18,6 +18,8 @@ main()
     Video:mongoose.model("Video",require('./videoModel.js')),
     Subscribe:mongoose.model("Subscribe",require('./subscribeModel.js')),
     Videocomment:mongoose.model("Videocomment",require('./videoCommentModel.js')),
+    Like:mongoose.model("Like",require('./videolikeModel.js')),
+
     
   }
 

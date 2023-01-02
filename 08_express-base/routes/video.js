@@ -23,6 +23,10 @@ router
     "/comment/:videoId/:commentId",
     verifyToken(),
     videoController.delcomment
-  );
+  )
+  //like or unlike
+  .get("/like/:videoId", verifyToken(), videoController.like)
+  .get("/dislike/:videoId", verifyToken(), videoController.dislike);
+
 
 module.exports = router;

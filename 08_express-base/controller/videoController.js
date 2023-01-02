@@ -1,5 +1,5 @@
 const { json } = require("express");
-const { Video, Videocomment } = require("../model/index");
+const { Video, Videocomment, Like } = require("../model/index");
 
 exports.videolist = async (req, res) => {
   let { pageNum = 1, pageSize = 10 } = req.body;
@@ -84,23 +84,23 @@ exports.delcomment = async (req, res) => {
       });
     }
     //获取评论Id
-   const comment= await Videocomment.findById(commentId)
+    const comment = await Videocomment.findById(commentId);
     if (!comment) {
       return res.status(404).json({
         err: "评论不存在",
       });
     }
-    if (!comment.user.equals(req.user.userinfo._id) ) {
+    if (!comment.user.equals(req.user.userinfo._id)) {
       return res.status(403).json({
         err: "评论不可删除!",
       });
     }
     //删除
-    await comment.remove()
+    await comment.remove();
     //当前videoInfo数据 commentCount 数量减一
 
-    videoInfo.commentCount--
-    await videoInfo.save()
+    videoInfo.commentCount--;
+    await videoInfo.save();
     res.status(200).json({
       msg: "删除成功!",
     });
@@ -110,3 +110,102 @@ exports.delcomment = async (req, res) => {
     });
   }
 };
+
+//like or unlike
+exports.like = async (req, res) => {
+  //获取videoId ,
+  const videoId = req.params.videoId;
+  const userId = req.user.userinfo._id;
+  const video = await Video.findById(videoId);
+  if (!video) {
+    return res.status(404).json({ err: "视频不存在" });
+  }
+  let doc = await Like.findOne({
+    user: userId,
+    video: videoId,
+  });
+  let islike = true
+  //如果有值,且是喜欢
+  if (doc && doc.like === 1) {
+    await doc.remove();
+    islike = false
+  } else if (doc && doc.like === -1) {
+    doc.like = 1;
+    await doc.save();
+  } else {
+    await new Like({
+      user: userId,
+      video: videoId,
+      like: 1,
+    }).save();
+  }
+
+  let like = await Like.countDocuments({
+    video: videoId,
+    like: 1,
+  });
+
+  let dislike = await Like.countDocuments({
+    video: videoId,
+    like: -1,
+  });
+  video.likeCount = like;
+  video.dislikeCount = dislike;
+  await video.save();
+  res.status(200).json({
+    ...video.toJSON(),
+    islike
+  })
+};
+
+
+exports.dislike = async (req, res) => {
+  //获取videoId ,
+  const videoId = req.params.videoId;
+  const userId = req.user.userinfo._id;
+  const video = await Video.findById(videoId);
+  if (!video) {
+    return res.status(404).json({ err: "视频不存在" });
+  }
+  let doc = await Like.findOne({
+    user: userId,
+    video: videoId,
+  });
+  let isdislike = true
+  //如果有值,且是喜欢
+  console.log(doc);
+  if (doc && doc.like === -1) {
+    await doc.remove();
+   
+  } else if (doc && doc.like === 1) {
+    doc.like = -1;
+    await doc.save();
+    isdislike = false
+  } else {
+    await new Like({
+      user: userId,
+      video: videoId,
+      like: -1,
+    }).save();
+    isdislike = false
+
+  }
+
+  let like = await Like.countDocuments({
+    video: videoId,
+    like: 1,
+  });
+
+  let dislike = await Like.countDocuments({
+    video: videoId,
+    like: -1,
+  });
+  video.likeCount = like;
+  video.dislikeCount = dislike;
+  await video.save();
+  res.status(200).json({
+    ...video.toJSON(),
+    isdislike
+  })
+};
+

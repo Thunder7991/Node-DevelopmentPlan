@@ -16,7 +16,9 @@ main()
   module.exports = {
     User:mongoose.model('User',require('./userModel.js')),
     Video:mongoose.model("Video",require('./videoModel.js')),
-    Subscribe:mongoose.model("Subscribe",require('./subscribeModel.js'))
+    Subscribe:mongoose.model("Subscribe",require('./subscribeModel.js')),
+    Videocomment:mongoose.model("Videocomment",require('./videoCommentModel.js')),
+    
   }
 
 // //创建集合

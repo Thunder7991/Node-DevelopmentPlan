@@ -26,6 +26,10 @@ const videoSchema = new mongoose.Schema({
     type:String,
     required:false
   },
+  commentCount:{
+    type:Number,
+    default:0
+},
   ...baseModel,
 });
 

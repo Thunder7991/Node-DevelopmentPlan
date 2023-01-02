@@ -1,5 +1,5 @@
 const { json } = require("express");
-const { Video, Videocomment, Like } = require("../model/index");
+const { Video, Videocomment, Like, Subscribe } = require("../model/index");
 
 exports.videolist = async (req, res) => {
   let { pageNum = 1, pageSize = 10 } = req.body;
@@ -33,6 +33,25 @@ exports.video = async (req, res) => {
     "user",
     "_id username cover"
   );
+  videoInfo = videoInfo.toJSON();
+  //没登录默认喜欢状态
+  videoInfo.islike = false;
+  videoInfo.isdislike = false;
+  videoInfo.isSubscribe = false
+  //判断是否登录/显示喜欢等相关数据
+  if (req.user.userinfo) {
+    const userId = req.user.userinfo._id;
+    if (await Like.findOne({ user: userId, video: videoId, like: 1 })) {
+      videoInfo.islike = true;
+    }
+
+    if (await Like.findOne({ user: userId, video: videoId, like: -1 })) {
+      videoInfo.isdislike = true;
+    }
+    if (await Subscribe.findOne({ user: userId, channel: videoInfo.user._id })) {
+      videoInfo.isSubscribe = true 
+    }
+  }
   res.status(200).json(videoInfo);
 };
 
@@ -124,11 +143,11 @@ exports.like = async (req, res) => {
     user: userId,
     video: videoId,
   });
-  let islike = true
+  let islike = true;
   //如果有值,且是喜欢
   if (doc && doc.like === 1) {
     await doc.remove();
-    islike = false
+    islike = false;
   } else if (doc && doc.like === -1) {
     doc.like = 1;
     await doc.save();
@@ -154,10 +173,10 @@ exports.like = async (req, res) => {
   await video.save();
   res.status(200).json({
     ...video.toJSON(),
-    islike
-  })
+    islike,
+  });
 };
-
+//不喜欢
 
 exports.dislike = async (req, res) => {
   //获取videoId ,
@@ -171,24 +190,22 @@ exports.dislike = async (req, res) => {
     user: userId,
     video: videoId,
   });
-  let isdislike = true
+  let isdislike = true;
   //如果有值,且是喜欢
   console.log(doc);
   if (doc && doc.like === -1) {
     await doc.remove();
-   
   } else if (doc && doc.like === 1) {
     doc.like = -1;
     await doc.save();
-    isdislike = false
+    isdislike = false;
   } else {
     await new Like({
       user: userId,
       video: videoId,
       like: -1,
     }).save();
-    isdislike = false
-
+    isdislike = false;
   }
 
   let like = await Like.countDocuments({
@@ -205,7 +222,31 @@ exports.dislike = async (req, res) => {
   await video.save();
   res.status(200).json({
     ...video.toJSON(),
-    isdislike
-  })
+    isdislike,
+  });
 };
+//喜欢列表
+exports.likelist = async (req, res) => {
+  const { pageNum = 1, pageSize = 10 } = req.params;
+  try {
+    let likes = await Like.find({
+      like: 1,
+      user: req.user.userinfo._id,
+    })
+      .skip((pageNum - 1) * pageSize)
+      .limit(pageSize)
+      .populate("video", "_id title vodvideoId user");
 
+    //获取数据数量
+    let likeCount = await Like.countDocuments({
+      like: 1,
+      user: req.user.userinfo._id,
+    });
+
+    res.status(200).json({ data: likes, count: likeCount });
+  } catch (error) {
+    res.status(500).json({
+      err: "服务器异常",
+    });
+  }
+};

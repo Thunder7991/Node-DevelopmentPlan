@@ -26,7 +26,12 @@ router
   )
   //like or unlike
   .get("/like/:videoId", verifyToken(), videoController.like)
-  .get("/dislike/:videoId", verifyToken(), videoController.dislike);
+  .get("/dislike/:videoId", verifyToken(), videoController.dislike)
+  .get("/likelist", verifyToken(), videoController.likelist)
+ 
+  //修改视频描述信息
+
+  //删除视频   删除视频 => 删除评论数据
 
 
 module.exports = router;

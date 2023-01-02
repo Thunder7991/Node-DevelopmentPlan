@@ -14,6 +14,15 @@ router
     videoValidator,
     videoController.createVideo
   )
-  .post("/comment/:videoId", verifyToken(), videoController.comment);
+  //视频评论
+  .post("/comment/:videoId", verifyToken(), videoController.comment)
+  //视频评论列表
+  .get("/commentlist/:videoId", verifyToken(), videoController.commentlist)
+  // 删除评论
+  .delete(
+    "/comment/:videoId/:commentId",
+    verifyToken(),
+    videoController.delcomment
+  );
 
 module.exports = router;

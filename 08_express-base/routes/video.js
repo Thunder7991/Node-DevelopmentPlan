@@ -30,8 +30,10 @@ router
   .get("/likelist", verifyToken(), videoController.likelist)
  
   //修改视频描述信息
+  .post("/editvideo",verifyToken(),videoController.editvideo)
 
   //删除视频   删除视频 => 删除评论数据
+  .delete("/delvideo/:videoId",verifyToken(),videoController.delvideo)
 
 
 module.exports = router;

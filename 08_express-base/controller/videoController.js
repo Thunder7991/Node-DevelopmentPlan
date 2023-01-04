@@ -1,6 +1,19 @@
 const { json } = require("express");
 const { Video, Videocomment, Like, Subscribe } = require("../model/index");
+//获取阿里云vod相关接口
+var RPCClient = require("@alicloud/pop-core").RPCClient;
+function initVodClient(accessKeyId, accessKeySecret) {
+  var regionId = "cn-beijing"; // 点播服务接入地域
+  var client = new RPCClient({
+    //填入AccessKey信息
+    accessKeyId: accessKeyId,
+    accessKeySecret: accessKeySecret,
+    endpoint: "http://vod." + regionId + ".aliyuncs.com",
+    apiVersion: "2017-03-21",
+  });
 
+  return client;
+}
 exports.videolist = async (req, res) => {
   let { pageNum = 1, pageSize = 10 } = req.body;
   let getVideoList = await Video.find()
@@ -37,7 +50,7 @@ exports.video = async (req, res) => {
   //没登录默认喜欢状态
   videoInfo.islike = false;
   videoInfo.isdislike = false;
-  videoInfo.isSubscribe = false
+  videoInfo.isSubscribe = false;
   //判断是否登录/显示喜欢等相关数据
   if (req.user.userinfo) {
     const userId = req.user.userinfo._id;
@@ -48,8 +61,10 @@ exports.video = async (req, res) => {
     if (await Like.findOne({ user: userId, video: videoId, like: -1 })) {
       videoInfo.isdislike = true;
     }
-    if (await Subscribe.findOne({ user: userId, channel: videoInfo.user._id })) {
-      videoInfo.isSubscribe = true 
+    if (
+      await Subscribe.findOne({ user: userId, channel: videoInfo.user._id })
+    ) {
+      videoInfo.isSubscribe = true;
     }
   }
   res.status(200).json(videoInfo);
@@ -249,4 +264,69 @@ exports.likelist = async (req, res) => {
       err: "服务器异常",
     });
   }
+};
+
+//修改视频描述信息
+exports.editvideo = async (req, res) => {
+  let userId = req.user.userinfo._id;
+  //获取客户端返回的信息
+  let { videoId = "", descrption = "" } = req.body;
+  if (!videoId) {
+    return res.status(400).json({
+      err: "视频标识异常!",
+    });
+  }
+  //修改数据库信息
+  let editVideoInfo = await Video.findByIdAndUpdate(videoId, req.body, {
+    new: true,
+  });
+  res.status(200).json({
+    msg: "修改成功!",
+  });
+};
+
+//删除视频
+exports.delvideo = async (req, res) => {
+  //获取用户ID
+  let id = req.user.userinfo._id;
+  //获取视频ID
+  let videoId = req.params.videoId;
+
+  if (!videoId) {
+    return res.status(400).json({
+      err: "请求参数异常!",
+    });
+  }
+
+  try {
+    let videoItem = await Video.findById(videoId).exec()
+    if (!videoItem) {
+      throw new Error("当前视频异常")
+    }
+    //传输阿里云视频
+    var client = initVodClient(
+      "LTAI5t9E91CjMewUdCZD79Vt",
+      "88888888888888888888"
+    );
+    let aliResult = await client.request(
+      "DeleteVideo",
+      {
+        VideoIds: videoItem.vodvideoId,
+      },
+      {}
+    );
+    await Video.findByIdAndDelete(videoId)
+    res.status(200).json({
+      msg:"删除成功"
+    })
+  } catch (error) {
+    if (error.message) {
+      res.status(500).json({ err: error.message });
+    } else {
+      res.status(500).json({ err: error });
+    }
+  }
+
+  //删除视频
+  // await Video.findByIdAndDelete(videoId,)
 };

@@ -10,6 +10,10 @@ const redis = new Redis({
 
 redis.set("mykey", "value");
 
+redis.keys("*").then(res => {
+  console.log(res);
+});
+
 // 链接异常
 // Unhandled error event: Error: connect ETIMEDOUT
 /**
@@ -41,14 +45,14 @@ redis.set("mykey", "value");
  * 添加密码
  *
  * requirepass root
- * 
+ *
  * 重启redis
  * sudo systemctl restart redis_6379
- * 
+ *
  * 查看端口运行情况
  * netstat -tunlp  | grep 6379
- * 
- * 以后在链接redis,使用 
+ *
+ * 以后在链接redis,使用
  * redis-cli -a root
- * 
+ *
  */

@@ -1,5 +1,11 @@
 const { json } = require("express");
-const { Video, Videocomment, Like, Subscribe } = require("../model/index");
+const {
+  Video,
+  Videocomment,
+  Like,
+  Subscribe,
+  Collect,
+} = require("../model/index");
 //获取阿里云vod相关接口
 var RPCClient = require("@alicloud/pop-core").RPCClient;
 function initVodClient(accessKeyId, accessKeySecret) {
@@ -299,9 +305,9 @@ exports.delvideo = async (req, res) => {
   }
 
   try {
-    let videoItem = await Video.findById(videoId).exec()
+    let videoItem = await Video.findById(videoId).exec();
     if (!videoItem) {
-      throw new Error("当前视频异常")
+      throw new Error("当前视频异常");
     }
     //传输阿里云视频
     var client = initVodClient(
@@ -315,10 +321,10 @@ exports.delvideo = async (req, res) => {
       },
       {}
     );
-    await Video.findByIdAndDelete(videoId)
+    await Video.findByIdAndDelete(videoId);
     res.status(200).json({
-      msg:"删除成功"
-    })
+      msg: "删除成功",
+    });
   } catch (error) {
     if (error.message) {
       res.status(500).json({ err: error.message });
@@ -326,7 +332,29 @@ exports.delvideo = async (req, res) => {
       res.status(500).json({ err: error });
     }
   }
+};
+//收藏
+exports.collect = async (req, res) => {
+  const videoId = req.params.videoId;
+  const userId = req.user.userinfo._id;
+  const video = await Video.findById(videoId);
+  if (!video) {
+    return res.status(404).json({ err: "视频不存在" });
+  }
+  var doc = await Collect.findOne({
+    user: userId,
+    video: videoId,
+  });
 
-  //删除视频
-  // await Video.findByIdAndDelete(videoId,)
+  if (doc) {
+    return res.status(403).json({
+      err: "视频已经被收藏!",
+    });
+  }
+
+  const mycollect = await  Collect({
+    user: userId,
+    video: videoId,
+  }).save();
+  res.status(201).json({ mycollect });
 };

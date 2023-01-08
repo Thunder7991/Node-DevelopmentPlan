@@ -19,6 +19,7 @@ main()
     Subscribe:mongoose.model("Subscribe",require('./subscribeModel.js')),
     Videocomment:mongoose.model("Videocomment",require('./videoCommentModel.js')),
     Like:mongoose.model("Like",require('./videolikeModel.js')),
+    Collect:mongoose.model("Collect",require('./collectModule.js')),
 
     
   }

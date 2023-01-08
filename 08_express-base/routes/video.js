@@ -34,6 +34,8 @@ router
 
   //删除视频   删除视频 => 删除评论数据
   .delete("/delvideo/:videoId",verifyToken(),videoController.delvideo)
+  //视频收藏
+  .get("/collect/:videoId",verifyToken(),videoController.collect)
 
 
 module.exports = router;

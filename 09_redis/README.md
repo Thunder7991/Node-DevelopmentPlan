@@ -169,14 +169,6 @@ firewall-cmd --zone=public --add-port=6379/tcp --permanent
 systemctl restart  firewalld
 ```
 
+## redis基础指令
 
-
-
-
-
-
-
-
-
-
-
+[redis基础指令](./Redis_command.md)

@@ -6,6 +6,7 @@ const {
   Subscribe,
   Collect,
 } = require("../model/index");
+const {hotInc} = require("../model/redis/redishotsinc")
 //获取阿里云vod相关接口
 var RPCClient = require("@alicloud/pop-core").RPCClient;
 function initVodClient(accessKeyId, accessKeySecret) {
@@ -45,7 +46,7 @@ exports.createVideo = async (req, res) => {
 
   res.send(req.body);
 };
-
+//观看
 exports.video = async (req, res) => {
   const { videoId } = req.params;
   let videoInfo = await Video.findById(videoId).populate(
@@ -73,9 +74,10 @@ exports.video = async (req, res) => {
       videoInfo.isSubscribe = true;
     }
   }
+  await hotInc(videoId,1)
   res.status(200).json(videoInfo);
 };
-
+//评论
 exports.comment = async (req, res) => {
   const { videoId } = req.params;
   const videoInfo = await Video.findById(videoId);
@@ -93,6 +95,7 @@ exports.comment = async (req, res) => {
   //评论数量 + 1
   videoInfo.commentCount++;
   await videoInfo.save();
+  await hotInc(videoId,2)
   res.status(201).json(comment);
 };
 
@@ -172,12 +175,14 @@ exports.like = async (req, res) => {
   } else if (doc && doc.like === -1) {
     doc.like = 1;
     await doc.save();
+   await hotInc(videoId,2)
   } else {
     await new Like({
       user: userId,
       video: videoId,
       like: 1,
     }).save();
+   await hotInc(videoId,2)
   }
 
   let like = await Like.countDocuments({
@@ -356,5 +361,16 @@ exports.collect = async (req, res) => {
     user: userId,
     video: videoId,
   }).save();
+  //添加热度
+  if (mycollect) {
+   await hotInc(videoId,3)
+  }
+
   res.status(201).json({ mycollect });
 };
+
+//观看 + 1 点赞 + 2  评论 + 2 收藏 + 3 
+
+
+
+

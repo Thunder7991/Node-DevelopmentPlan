@@ -6,7 +6,7 @@ const {
   Subscribe,
   Collect,
 } = require("../model/index");
-const {hotInc} = require("../model/redis/redishotsinc")
+const {hotInc,topHots} = require("../model/redis/redishotsinc")
 //获取阿里云vod相关接口
 var RPCClient = require("@alicloud/pop-core").RPCClient;
 function initVodClient(accessKeyId, accessKeySecret) {
@@ -370,6 +370,15 @@ exports.collect = async (req, res) => {
 };
 
 //观看 + 1 点赞 + 2  评论 + 2 收藏 + 3 
+
+//获取热门视频
+exports.gethots =async(req,res) => {
+  let topnum = req.params.topnum
+ let tops =  await topHots(topnum)
+ res.status(200).json({
+  tops
+ })
+}
 
 
 

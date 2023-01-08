@@ -36,6 +36,8 @@ router
   .delete("/delvideo/:videoId",verifyToken(),videoController.delvideo)
   //视频收藏
   .get("/collect/:videoId",verifyToken(),videoController.collect)
+  //获取推荐的热门视频
+  .get("/gethots/:topnum",videoController.gethots)
 
 
 module.exports = router;

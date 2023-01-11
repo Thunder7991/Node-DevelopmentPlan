@@ -10,5 +10,6 @@ module.exports.redisClient = {
     password: "root",
     lazyConnect: true,
     connectTimeout: 5000,
+    enableReadyCheck:false
 
 }

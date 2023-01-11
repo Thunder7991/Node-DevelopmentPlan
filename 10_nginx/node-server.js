@@ -13,8 +13,8 @@ server.listen(3000, () => {
 server.on('request', (req, res) => {
   if (req.url == '/') {
     res.end('node-server');
-  } else {
-    res.end('other path node-server');
+  }else {
+    res.end("other path node-server")
   }
 });
 
@@ -25,3 +25,4 @@ server.on('request', (req, res) => {
 // location /test {
 //     proxy_pass HTTP://127.0.0.1:3000;
 //     }
+

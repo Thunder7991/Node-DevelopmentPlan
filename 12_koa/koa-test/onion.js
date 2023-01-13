@@ -11,9 +11,9 @@ app.use(   (ctx, next) => {
 });
 
 app.use(async (ctx, next) => {
-  console.log('tow - 1');
+await  console.log('tow - 1');
   next();
-  console.log('tow - 2');
+  await  console.log('tow - 2');
 });
 
 app.use(async (ctx, next) => {
@@ -25,3 +25,10 @@ app.use(async (ctx, next) => {
 app.listen(300, () => {
   console.log('http://127.0.0.1:300');
 });
+
+// one - 1
+// tow - 1
+// one - 2
+// three - 1
+// three - 2
+// tow - 2

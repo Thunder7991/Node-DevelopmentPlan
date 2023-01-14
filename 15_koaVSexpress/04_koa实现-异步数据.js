@@ -16,7 +16,7 @@ const middleware2 = async (ctx, next) => {
 }
 
 const middleware3 = async (ctx, next) => {
-  const result = await axios.get('******');
+  const result = await axios.get('https://www.czvvin.cn/test/api/v1/user/logins')
   ctx.message += result.data.lrc.lyric;
 }
 

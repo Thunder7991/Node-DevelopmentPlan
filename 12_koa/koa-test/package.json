@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"nodemon onion.js"
+    "dev": "nodemon onion.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.14.1"
+    "@koa/router": "^12.0.0",
+    "koa": "^2.14.1",
+    "koa-body": "^6.0.1"
   }
 }

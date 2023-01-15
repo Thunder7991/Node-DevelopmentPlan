@@ -1,10 +1,11 @@
-const router = require('koa-router')({
-  prefix: '/api/v1'
-})
-const uerController = require("../controller/userController")
+const Router = require('@koa/router')
+const router = new Router({ prefix: '/api/v1' })
+const userController = require('../controller/userController')
 
-router.get('/user',uerController.index)
+const {registerValidate} = require("../middleware/userValidate")
+router.get('/user/:userId', userController.index)
+//用户注册
+router.post('/user/register',registerValidate, userController.register)
 
 
-
-module.exports = router
+module.exports = router;

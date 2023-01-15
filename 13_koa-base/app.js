@@ -9,11 +9,19 @@ const cors = require('@koa/cors');
 const logger = require('koa-logger');
 
 const router = require('./routes/index');
-const users = require('./routes/users');
+
+// const users = require('./routes/users');
 
 app.use(cors());
 // error handler
-onerror(app);
+onerror(app,{
+  accepts(...args) {
+		return 'json';
+	},
+  json(err, ctx) {
+    ctx.body = { code: -1, data: [], msg: err.message };
+}
+});
 
 // middlewares
 // app.use(bodyparser({
@@ -24,11 +32,11 @@ app.use(json());
 app.use(logger());
 app.use(require('koa-static')(__dirname + '/public'));
 
-app.use(
-  views(__dirname + '/views', {
-    extension: 'pug',
-  }),
-);
+// app.use(
+//   views(__dirname + '/views', {
+//     extension: 'pug',
+//   }),
+// );
 
 // logger
 app.use(async (ctx, next) => {
@@ -38,12 +46,13 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
 
+
 // routes
 app.use(router.routes(), router.allowedMethods());
 
 // error-handling
 app.on('error', (err, ctx) => {
-  console.error('server error', err, ctx);
+  // console.error('server error', err, ctx);
 });
 
 module.exports = app;

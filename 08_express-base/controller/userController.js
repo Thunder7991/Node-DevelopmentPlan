@@ -19,13 +19,10 @@ exports.login = async (req, res) => {
   // 客户端数据验证
 
   //链接数据库进行查询
-  console.log(req.body);
   let dbBack = await User.findOne(req.body);
-  console.log(dbBack);
   if (!dbBack) {
     res.status(402).json({ error: "邮箱或者密码不正确" });
   }
-  console.log(dbBack);
   dbBack = dbBack.toJSON();
   dbBack.token = await createToken(dbBack);
   res.status(200).json(dbBack);

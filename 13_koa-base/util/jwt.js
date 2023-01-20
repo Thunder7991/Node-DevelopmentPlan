@@ -15,14 +15,15 @@ module.exports.verifyToken = function (required = true) {
       try {
         let userinfo = await verify(token, uuid);
         req.user = userinfo;
-        next();
+       await next();
       } catch (error) {
         res.status('402').json({ error: '无效token!' });
       }
     } else if (required) {
       res.status(402).json({ error: '请传入token' });
     } else {
-      next();
+   await  next();
+ 
     }
   };
 };

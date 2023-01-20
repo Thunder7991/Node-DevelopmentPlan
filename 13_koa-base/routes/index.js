@@ -12,6 +12,7 @@ router.get('/user/:userId', userController.index);
 //用户注册
 router.post('/user/register', registerValidate, userController.register);
 router.post('/user/login', loginValidate, userController.login);
-router.post('/user/getuser', verifyToken(true), userController.getuser);
+//获取用户信息(频道)
+router.get('/user/getuser/:userid', verifyToken(false), userController.getuser);
 
 module.exports = router;

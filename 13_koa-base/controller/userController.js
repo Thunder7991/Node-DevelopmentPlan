@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-14 22:43:53
- * @LastEditTime: 2023-01-20 21:41:40
+ * @LastEditTime: 2023-01-20 22:03:23
  * @email: 853524319@qq.com
  * @Description: "控制器"
  */
@@ -42,7 +42,7 @@ module.exports.getuser = async (ctx) => {
   const userid = ctx.request.params.userid;
 
   //获取应经登录的信息
-  const registerUserId = ctx.user ? ctx.user.userinfo._id : null;
+  const registerUserId = ctx.user ? ctx.user.userInfo._id : null;
   let isSubscribe = false;
   if (registerUserId) {
     //是否订阅
@@ -68,4 +68,45 @@ module.exports.getuser = async (ctx) => {
   userInfo.isSubscribe = isSubscribe;
 
   ctx.body = userInfo;
+};
+
+//关注频道
+module.exports.setSubscribe = async (ctx) => {
+  const subscribeid = ctx.request.params.subscribeid;
+  //获取用户信息
+  const userid = ctx.user.userInfo._id;
+
+  if (subscribeid == userid) {
+    return ctx.throw(403, '不能关注自己!');
+  }
+
+  let subinfo = await Subscribe.findOne({
+    user: userid,
+    channel: subscribeid,
+  });
+
+  if (subinfo) {
+    return ctx.throw(403, '已经关注过了');
+  }
+  //插入数据
+  let sub = new Subscribe({
+    user: userid,
+    channel: subscribeid,
+  });
+  let subDb = await sub.save();
+  if (subDb) {
+    //当前用户关注者数量加1
+    let subscribeUser = await User.findById(subscribeid, [
+      'username',
+      'image',
+      'cover',
+      'channeldes',
+      'subscribeCount'
+    ]);
+    subscribeUser.subscribeCount++;
+    await subscribeUser.save();
+    ctx.body = subscribeUser;
+  } else {
+    ctx.throw(501, '关注失败,请稍后重试!');
+  }
 };

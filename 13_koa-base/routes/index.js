@@ -14,5 +14,7 @@ router.post('/user/register', registerValidate, userController.register);
 router.post('/user/login', loginValidate, userController.login);
 //获取用户信息(频道)
 router.get('/user/getuser/:userid', verifyToken(false), userController.getuser);
+//关注用户
+router.get('/user/subscribe/:subscribeid', verifyToken(true), userController.setSubscribe);
 
 module.exports = router;

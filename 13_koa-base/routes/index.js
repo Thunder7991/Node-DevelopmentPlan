@@ -8,7 +8,7 @@ const {
 } = require('../middleware/userValidate');
 const { verifyToken } = require('../util/jwt');
 
-router.get('/user/:userId', userController.index);
+// router.get('/user/:userId', userController.index);
 //用户注册
 router.post('/user/register', registerValidate, userController.register);
 router.post('/user/login', loginValidate, userController.login);
@@ -16,5 +16,13 @@ router.post('/user/login', loginValidate, userController.login);
 router.get('/user/getuser/:userid', verifyToken(false), userController.getuser);
 //关注用户
 router.get('/user/subscribe/:subscribeid', verifyToken(true), userController.setSubscribe);
+
+
+router.get('/user/subscribelist', verifyToken(true), userController.subscribeList);
+
+
+//获取关注列表
+// router.get( verifyToken(true), userController.subscribeList);
+
 
 module.exports = router;

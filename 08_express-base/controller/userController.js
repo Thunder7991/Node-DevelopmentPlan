@@ -1,7 +1,7 @@
-const { User, Subscribe } = require("../model/index");
-const { createToken } = require("../util/jwt");
-const fs = require("fs/promises");
-const { pick } = require("lodash");
+const { User, Subscribe } = require('../model/index');
+const { createToken } = require('../util/jwt');
+const fs = require('fs/promises');
+const { pick } = require('lodash');
 const rename = fs.rename;
 
 exports.delete = async (req, res) => {};
@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
   //链接数据库进行查询
   let dbBack = await User.findOne(req.body);
   if (!dbBack) {
-    res.status(402).json({ error: "邮箱或者密码不正确" });
+    res.status(402).json({ error: '邮箱或者密码不正确' });
   }
   dbBack = dbBack.toJSON();
   dbBack.token = await createToken(dbBack);
@@ -52,18 +52,18 @@ exports.headimg = async (req, res) => {
   //   path: 'public\\images\\eea6e916e54e8102f5a8dc75f81fdfec',
   //   size: 3417070
   // }
-  let fileArr = req.file.originalname.split(".");
+  let fileArr = req.file.originalname.split('.');
   let fileType = fileArr[fileArr.length - 1];
   let filename = req.file.filename;
 
   try {
     await rename(
-      "./public/images/" + filename,
-      "./public/images/" + filename + "." + fileType
+      './public/images/' + filename,
+      './public/images/' + filename + '.' + fileType,
     );
     res.status(201).json({
       filename,
-      filepath: filename + "." + fileType,
+      filepath: filename + '.' + fileType,
     });
   } catch (error) {
     res.status(500).json({
@@ -73,7 +73,7 @@ exports.headimg = async (req, res) => {
 };
 exports.list = async (req, res, next) => {
   console.log(req);
-  res.send("respond with a resource");
+  res.send('respond with a resource');
 };
 
 //用户订阅 关注
@@ -82,7 +82,7 @@ exports.subscribe = async (req, res) => {
   const channelId = req.params.userId;
   console.log(userId === channelId);
   if (userId === channelId) {
-    return res.status(401).json({ err: "不能关注自己" });
+    return res.status(401).json({ err: '不能关注自己' });
   }
   //获取记录
   let record = await Subscribe.findOne({
@@ -99,10 +99,10 @@ exports.subscribe = async (req, res) => {
     const user = await User.findById(channelId);
     user.subscribeCount++;
     await user.save();
-    res.status(200).json({ msg: "关注成功!" });
+    res.status(200).json({ msg: '关注成功!' });
   } else {
     res.status(401).json({
-      err: "已经订阅此频道",
+      err: '已经订阅此频道',
     });
   }
 };
@@ -113,7 +113,7 @@ exports.unsubscribe = async (req, res) => {
   const channelId = req.params.userId;
   console.log(userId === channelId);
   if (userId === channelId) {
-    return res.status(401).json({ err: "不能取消关注自己" });
+    return res.status(401).json({ err: '不能取消关注自己' });
   }
   //判断是否关注过
   let record = await Subscribe.findOne({
@@ -127,10 +127,10 @@ exports.unsubscribe = async (req, res) => {
     const user = await User.findById(channelId);
     user.subscribeCount--;
     await user.save();
-    res.status(200).json({ msg: "取消关注成功" });
+    res.status(200).json({ msg: '取消关注成功' });
   } else {
     res.status(401).json({
-      err: "没有订阅此频道",
+      err: '没有订阅此频道',
     });
   }
 };
@@ -151,47 +151,47 @@ exports.getChannel = async (req, res) => {
   user.isSubscribe = isSubscribe;
   res.status(200).json({
     user: pick(user, [
-      "_id",
-      "username",
-      "image",
-      "subscribeCount",
-      "channeldes",
-      "cover",
+      '_id',
+      'username',
+      'image',
+      'subscribeCount',
+      'channeldes',
+      'cover',
     ]),
     isSubscribe,
   });
 };
 //获取关注列表
-exports.getsubscribelist = async(req,res) => {
- let subscribeList =  await Subscribe.find({
-    user:req.params.userId
-  }).populate("channel")
-  subscribeList = subscribeList.map(item => {
-   return pick(item.channel,[
-      "_id",
-      "username",
-      "image",
-      "subscribeCount",
-      "channeldes",
-      "cover",
-    ])
-  })
-  res.status(200).json({data:subscribeList})
-}
+exports.getsubscribelist = async (req, res) => {
+  let subscribeList = await Subscribe.find({
+    user: req.params.userId,
+  }).populate('channel');
+  subscribeList = subscribeList.map((item) => {
+    return pick(item.channel, [
+      '_id',
+      'username',
+      'image',
+      'subscribeCount',
+      'channeldes',
+      'cover',
+    ]);
+  });
+  res.status(200).json({ data: subscribeList });
+};
 //获取粉丝列表
-exports.getfanslist = async(req,res) => {
-  let fansList =  await Subscribe.find({
-    channel:req.user.userinfo._id
-   }).populate("user")
-   fansList = fansList.map(item => {
-    return pick(item.user,[
-       "_id",
-       "username",
-       "image",
-       "subscribeCount",
-       "channeldes",
-       "cover",
-     ])
-   })
-   res.status(200).json({data:fansList})
- }
+exports.getfanslist = async (req, res) => {
+  let fansList = await Subscribe.find({
+    channel: req.user.userinfo._id,
+  }).populate('user');
+  fansList = fansList.map((item) => {
+    return pick(item.user, [
+      '_id',
+      'username',
+      'image',
+      'subscribeCount',
+      'channeldes',
+      'cover',
+    ]);
+  });
+  res.status(200).json({ data: fansList });
+};

@@ -5,7 +5,7 @@ exports.registerValidate = async (ctx, next) => {
     username: Joi.string().required(),
     password: Joi.string().min(6).required(),
     email: Joi.string().email().required(),
-    phone: Joi.string(),
+    phone: Joi.string().required()
   }).validate(ctx.request.body);
   if (schema.error) {
     //抛出错误

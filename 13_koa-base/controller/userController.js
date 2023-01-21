@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-14 22:43:53
- * @LastEditTime: 2023-01-20 22:03:23
+ * @LastEditTime: 2023-01-21 23:25:28
  * @email: 853524319@qq.com
  * @Description: "控制器"
  */
@@ -11,7 +11,7 @@ const { createToken } = require('../util/jwt');
 
 //用户注册
 //用户注册
-module.exports.register = async (ctx) => {
+exports.register = async (ctx) => {
   const userModel = new User(ctx.request.body);
   const dbBack = await userModel.save();
   user = dbBack.toJSON();
@@ -25,7 +25,7 @@ exports.index = async (ctx, next) => {
   ctx.body = user;
 };
 //用户登录
-module.exports.login = async (ctx) => {
+exports.login = async (ctx) => {
   let dbBack = await User.findOne(ctx.request.body);
   if (!dbBack) {
     return ctx.throw(402, '邮箱或者密码不正确!');
@@ -33,16 +33,16 @@ module.exports.login = async (ctx) => {
 
   dbBack = dbBack.toJSON();
   dbBack.token = await createToken(dbBack);
-  ctx.body = dbBack.token;
+  ctx.body = dbBack;
 };
 
 //获取用户信息
-module.exports.getuser = async (ctx) => {
+exports.getuser = async (ctx) => {
   console.log(ctx.request.params);
   const userid = ctx.request.params.userid;
 
   //获取应经登录的信息
-  const registerUserId = ctx.user ? ctx.user.userInfo._id : null;
+  const registerUserId = ctx.user ? ctx.user.userinfo._id : null;
   let isSubscribe = false;
   if (registerUserId) {
     //是否订阅
@@ -65,16 +65,17 @@ module.exports.getuser = async (ctx) => {
     'subscribeCount',
   ]);
   let userInfo = userInfoDb.toJSON();
-  userInfo.isSubscribe = isSubscribe;
+  userinfo.isSubscribe = isSubscribe;
 
   ctx.body = userInfo;
 };
 
 //关注频道
-module.exports.setSubscribe = async (ctx) => {
+exports.setSubscribe = async (ctx) => {
+  console.log(ctx);
   const subscribeid = ctx.request.params.subscribeid;
   //获取用户信息
-  const userid = ctx.user.userInfo._id;
+  const userid = ctx.user.userinfo._id;
 
   if (subscribeid == userid) {
     return ctx.throw(403, '不能关注自己!');
@@ -101,7 +102,7 @@ module.exports.setSubscribe = async (ctx) => {
       'image',
       'cover',
       'channeldes',
-      'subscribeCount'
+      'subscribeCount',
     ]);
     subscribeUser.subscribeCount++;
     await subscribeUser.save();
@@ -109,4 +110,17 @@ module.exports.setSubscribe = async (ctx) => {
   } else {
     ctx.throw(501, '关注失败,请稍后重试!');
   }
+};
+
+//关注列表
+exports.subscribeList = async (ctx) => {
+  //获取登录者ID
+  const userid = ctx.user.userinfo._id;
+  console.log(userid);
+  //获取相关信息
+  let subList = await Subscribe.find({
+    user: userid,
+  }).populate('channel', ['username', 'image', 'channeldes', 'subscribeCount']);
+
+  ctx.body = subList
 };

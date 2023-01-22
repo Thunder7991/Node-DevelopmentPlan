@@ -35,6 +35,9 @@ router.get("/video/getPlayer",verifyToken(false),vodController.getPlayer)
 router.get("/video/videoList/:userid",verifyToken(false),videoController.videoList)
 //获取视频详情
 router.get("/video/getvideodetail/:videoid",verifyToken(false),videoController.getvideodetail)
+// 视频评论
+router.post("/video/comment/:videoid",verifyToken(true),videoController.comment)
+
 
 
 module.exports = router;

@@ -1,7 +1,6 @@
 //视频评论模型
 
 const mongoose = require("mongoose")
-const md5 = require('../util/md5')
 const baseModel = require("./baseModel")
 const videoCommentSchema = new mongoose.Schema({
     content:{

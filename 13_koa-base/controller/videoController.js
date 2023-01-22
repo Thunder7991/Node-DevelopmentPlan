@@ -1,12 +1,12 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-22 12:46:33
- * @LastEditTime: 2023-01-22 20:42:36
+ * @LastEditTime: 2023-01-22 21:07:17
  * @email: 853524319@qq.com
  * @Description:  视频处理
  */
 
-const { Video } = require('../model/index');
+const { Video, Videocomment } = require('../model/index');
 
 // 创建视频
 exports.createVideo = async (ctx) => {
@@ -53,5 +53,33 @@ exports.getvideodetail = async (ctx) => {
     let vodinfo = await getVodPlay(videoinfo.vodvideoId);
     videoinfo.vod = vodinfo || {};
     ctx.body = videoinfo;
+  }
+};
+
+//视频评论
+exports.comment = async (ctx) => {
+  //获取视频ID
+  const videoId = ctx.request.params.videoid;
+  const { content = '' } = ctx.request.body;
+  const userId = ctx.user.userInfo._id;
+
+  let videoInfo = await Video.findById(videoId);
+  if (videoInfo) {
+    let commentModel = new Videocomment({
+      content,
+      video: videoId,
+      user: userId,
+    });
+    let dbBack = await commentModel.save();
+    if (dbBack) {
+      videoInfo.commentCount++;
+      await videoInfo.save();
+      //redis hot + 2
+      ctx.body = { msg: '评论成功!' };
+    } else {
+      ctx.throw(501, '评论失败!');
+    }
+  } else {
+    ctx.throw(404, '视频不存在');
   }
 };

@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-22 12:46:33
- * @LastEditTime: 2023-01-22 20:10:20
+ * @LastEditTime: 2023-01-22 20:42:36
  * @email: 853524319@qq.com
  * @Description:  视频处理
  */
@@ -33,9 +33,25 @@ exports.videoList = async (ctx) => {
     .skip((pageNum - 1) * pageSize)
     .limit(pageSize)
     .sort({ createAt: -1 }) //排序
-    .populate('user',"_id username cover"); //关联用户
-  console.log(37,videolist);
+    .populate('user', '_id username cover'); //关联用户
+  console.log(37, videolist);
   ctx.body = videolist;
 };
 
-//创建视频
+//获取视频详情
+exports.getvideodetail = async (ctx) => {
+  const videoid = ctx.request.params.videoid;
+  let dbBack = await Video.findById(videoid).populate(
+    'user',
+    '_id username cover',
+  );
+  let videoinfo = dbBack._doc;
+  if (!dbBack) {
+    ctx.throw(501, '视频不存在!');
+  } else {
+    const { getVodPlay } = require('./vodController');
+    let vodinfo = await getVodPlay(videoinfo.vodvideoId);
+    videoinfo.vod = vodinfo || {};
+    ctx.body = videoinfo;
+  }
+};

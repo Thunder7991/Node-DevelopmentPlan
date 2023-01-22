@@ -33,5 +33,8 @@ router.post('/video/createvideo', verifyToken(true),videoValidator, videoControl
 router.get("/video/getPlayer",verifyToken(false),vodController.getPlayer)
 //获取视频列表
 router.get("/video/videoList/:userid",verifyToken(false),videoController.videoList)
+//获取视频详情
+router.get("/video/getvideodetail/:videoid",verifyToken(false),videoController.getvideodetail)
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-22 11:00:02
- * @LastEditTime: 2023-01-22 19:30:40
+ * @LastEditTime: 2023-01-22 20:41:04
  * @email: 853524319@qq.com
  * @Description:  视频管理控制器
  */
@@ -37,24 +37,29 @@ exports.getvod = async (ctx) => {
   //  获取上传凭证
   ctx.body = vodback;
 };
-
-exports.getPlayer = async (ctx) => {
-  // 调用样例
-  // 请求示例
+const getVodPlay = async (vodid) => {
   var client = initVodClient(
     'LTAI5tQaCWqun1sxXnMhkPrx',
-    '**************',
+    'PV4Ll8ak0EQDnHnq9iGOXhj28fIOp9',
   );
   try {
     let response = await client.request(
       'GetPlayInfo',
       {
-        VideoId: '13c3b06089ae71edb9ed16b5feac0102',
+        VideoId: vodid,
       },
       {},
     );
-    ctx.body = response;
+
+    return response;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    throw new Error('获取视频信息异常!');
   }
+};
+exports.getVodPlay = getVodPlay;
+//获取播放地址
+exports.getPlayer = async (ctx) => {
+  let paly = await getVodPlay(ctx.require.query.vodid);
+  ctx.body = paly;
 };

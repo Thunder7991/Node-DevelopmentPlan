@@ -31,5 +31,7 @@ router.get('/video/getvod', verifyToken(true), vodController.getvod);
 router.post('/video/createvideo', verifyToken(true),videoValidator, videoController.createVideo);
 //获取播放地址
 router.get("/video/getPlayer",verifyToken(false),vodController.getPlayer)
+//获取视频列表
+router.get("/video/videoList/:userid",verifyToken(false),videoController.videoList)
 
 module.exports = router;

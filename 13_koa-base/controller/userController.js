@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-01-14 22:43:53
- * @LastEditTime: 2023-01-21 23:25:28
+ * @LastEditTime: 2023-01-22 10:40:34
  * @email: 853524319@qq.com
  * @Description: "控制器"
  */
@@ -42,7 +42,7 @@ exports.getuser = async (ctx) => {
   const userid = ctx.request.params.userid;
 
   //获取应经登录的信息
-  const registerUserId = ctx.user ? ctx.user.userinfo._id : null;
+  const registerUserId = ctx.user ? ctx.user.userInfo._id : null;
   let isSubscribe = false;
   if (registerUserId) {
     //是否订阅
@@ -65,7 +65,7 @@ exports.getuser = async (ctx) => {
     'subscribeCount',
   ]);
   let userInfo = userInfoDb.toJSON();
-  userinfo.isSubscribe = isSubscribe;
+  userInfo.isSubscribe = isSubscribe;
 
   ctx.body = userInfo;
 };
@@ -75,7 +75,7 @@ exports.setSubscribe = async (ctx) => {
   console.log(ctx);
   const subscribeid = ctx.request.params.subscribeid;
   //获取用户信息
-  const userid = ctx.user.userinfo._id;
+  const userid = ctx.user.userInfo._id;
 
   if (subscribeid == userid) {
     return ctx.throw(403, '不能关注自己!');
@@ -115,12 +115,13 @@ exports.setSubscribe = async (ctx) => {
 //关注列表
 exports.subscribeList = async (ctx) => {
   //获取登录者ID
-  const userid = ctx.user.userinfo._id;
+  console.log(ctx.user);
+  const userid = ctx.user.userInfo._id;
   console.log(userid);
   //获取相关信息
   let subList = await Subscribe.find({
     user: userid,
   }).populate('channel', ['username', 'image', 'channeldes', 'subscribeCount']);
 
-  ctx.body = subList
+  ctx.body = subList;
 };

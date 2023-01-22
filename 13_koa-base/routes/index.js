@@ -20,9 +20,11 @@ router.get('/user/subscribe/:subscribeid', verifyToken(true), userController.set
 
 router.get('/user/subscribelist', verifyToken(true), userController.subscribeList);
 
+//视频管理模块
+// 视频管理模块
+const vodController= require("../controller/vodController")
+router.get('/video/getvod', verifyToken(true), vodController.getvod);
 
-//获取关注列表
-// router.get( verifyToken(true), userController.subscribeList);
 
 
 module.exports = router;

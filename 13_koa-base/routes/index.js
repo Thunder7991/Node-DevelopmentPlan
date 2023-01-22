@@ -29,6 +29,7 @@ router.get('/user/subscribelist', verifyToken(true), userController.subscribeLis
 router.get('/video/getvod', verifyToken(true), vodController.getvod);
 //视频入库
 router.post('/video/createvideo', verifyToken(true),videoValidator, videoController.createVideo);
-
+//获取播放地址
+router.get("/video/getPlayer",verifyToken(false),vodController.getPlayer)
 
 module.exports = router;

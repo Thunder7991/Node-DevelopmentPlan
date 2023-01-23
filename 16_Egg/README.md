@@ -1,6 +1,6 @@
 # egg-test
 
-study
+If you know Node, or even koa, you will find that getting started with Egg is really easy. Read the document carefully and you will find that it solves more than 80% of the problems in reality.
 
 ## QuickStart
 

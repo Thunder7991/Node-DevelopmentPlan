@@ -4,6 +4,8 @@ Just to provide learning, I don't recommend novices to read it directly. I summa
 
 Recommended books : Web Development with Node and Express (Second edition)
 
+> You will find that the contents of the previous sections are too simple. You are welcome to add, for example, the use of `Stream` and `Buffer`
+
 ## Main modules
 
 08_express-base
@@ -11,4 +13,6 @@ Recommended books : Web Development with Node and Express (Second edition)
 09_redis 
 
 13_koa-base
+
+17_egg-base
 

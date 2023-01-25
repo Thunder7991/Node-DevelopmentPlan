@@ -36,18 +36,13 @@ class UserController extends Controller {
       },
       userBody
     );
-    console.log(userBody);
     const user = await this.service.user.findEmail(userBody);
-    console.log(41, user);
-
     if (!user) {
       this.ctx.throw(422, '用户未注册!');
     }
-
     if (this.ctx.helper.md5(userBody.password) !== user.password) {
       this.ctx.throw(422, '密码不正确!');
     }
-
     const token = this.service.user.createToken({ user });
     const userinfo = user._doc;
     delete userinfo.password;
@@ -55,6 +50,30 @@ class UserController extends Controller {
       ...userinfo,
       token,
     };
+  }
+
+  async userInfo() {
+    // 获取登录用户的id
+    const USER_ID = this.ctx.user ? this.ctx.user._id : null;
+    // 获取查询用户的id
+    const userid = this.ctx.params.userid;
+    // 是否关注
+    let isSubscribe = false;
+    const { Subscribe, User } = this.app.model;
+    if (USER_ID) {
+      const subscribe = await Subscribe.findOne({
+        user: USER_ID,
+        channel: userid,
+      });
+      if (subscribe) {
+        isSubscribe = true;
+      }
+    }
+    // 查看用户信息
+    const goalUserInfoDb = await User.findById(userid);
+    const userInfo = goalUserInfoDb._doc;
+    userInfo.isSubscribe = isSubscribe;
+    this.ctx.body = userInfo;
   }
 }
 

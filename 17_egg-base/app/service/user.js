@@ -12,6 +12,10 @@ class UserService extends Service {
   findEmail(body) {
     return this.User.findOne(body).select('+password');// 查询的时候添加上密码
   }
+  // 验证token
+  verifyToken(token) {
+    return jwt.verify(token, this.app.config.jwt.secret);
+  }
   // 创建用户
   async createUser(data) {
     data.password = this.ctx.helper.md5(data.password);

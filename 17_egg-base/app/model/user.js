@@ -1,7 +1,6 @@
 const baseModel = require('./baseModel');
 const { md5 } = require('../extend/helper');
 module.exports = app => {
-
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
   const UserSchema = new Schema({

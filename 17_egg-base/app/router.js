@@ -22,6 +22,9 @@ module.exports = app => {
   // 视频管理模块
   // 获取上传凭证
   router.get('/video/getvod', auth(true), controller.vod.getvod);
+  // 开始上传(略)
+  // 获取视频详情
+  router.get('/video/getvideo/:videoid', auth(true), controller.vod.getvideo);
 
 
 };

@@ -10,7 +10,8 @@
     "egg": "^3",
     "egg-mongoose": "^3.3.1",
     "egg-scripts": "^2",
-    "egg-validate": "^2.0.2"
+    "egg-validate": "^2.0.2",
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "egg-bin": "^5",

@@ -10,4 +10,6 @@ module.exports = app => {
   router.prefix('/api/v1');
   // 用户频道
   router.post('/users', controller.user.create);
+  // 用户登录
+  router.post('/users/login', controller.user.login);
 };

@@ -3,12 +3,15 @@ const Controller = require('egg').Controller;
 class VideoController extends Controller {
   // 创建评论
   async setcomment() {
-    const { ctx } = this;
+    const { ctx, service } = this;
     const body = ctx.request.body;
     const videoid = ctx.params.videoid;
-    ctx.validate({
-      content: { type: 'string' },
-    }, body);
+    ctx.validate(
+      {
+        content: { type: 'string' },
+      },
+      body
+    );
 
     const { VideoModel, VideoCommentModel } = this.app.model;
     const video = await VideoModel.findById(videoid);
@@ -27,6 +30,7 @@ class VideoController extends Controller {
       });
       await video.save();
       // 添加热度
+      service.redishot.hotInc(videoid, 2);
       ctx.body = {
         msg: '评论成功',
       };
@@ -35,6 +39,5 @@ class VideoController extends Controller {
     }
   }
 }
-
 
 module.exports = VideoController;

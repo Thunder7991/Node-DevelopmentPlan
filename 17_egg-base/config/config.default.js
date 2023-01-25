@@ -43,6 +43,15 @@ module.exports = appInfo => {
     secret: '4a380a09-3aab-401b-a620-1372b7e8c77a',
     expiresIn: '1d',
   };
+  config.redis = {
+    host: '192.168.148.128',
+    port: 6379,
+    password: 'root',
+    lazyConnect: true,
+    connectTimeout: 5000,
+    enableReadyCheck: false,
+
+  };
   return {
     ...config,
     ...userConfig,

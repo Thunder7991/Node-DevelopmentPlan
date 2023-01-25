@@ -41,6 +41,5 @@ module.exports = app => {
     },
     ...baseModel,
   });
-
   return mongoose.model('User', UserSchema);
 };

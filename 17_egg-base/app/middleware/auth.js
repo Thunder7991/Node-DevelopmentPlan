@@ -9,15 +9,15 @@ module.exports = (required = true) => {
       try {
         const data = ctx.service.user.verifyToken(token);
         // 用户信息
-        ctx.user = data;
-        await next();
+        ctx.user = data.user;
       } catch (error) {
         ctx.throw(402, error);
       }
-    } else if (required) {
-      ctx.throw(402, '请传入token!');
-    } else {
+    } else if (!required) {
       await next();
+    } else {
+      ctx.throw(402, '请传入token!');
     }
+    await next();
   };
 };

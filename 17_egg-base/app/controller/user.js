@@ -75,6 +75,40 @@ class UserController extends Controller {
     userInfo.isSubscribe = isSubscribe;
     this.ctx.body = userInfo;
   }
+
+  // 关注频道
+  async subscribe() {
+    const { ctx, app } = this;
+    const subscribeid = ctx.params.subscribeid;
+    const userid = ctx.user._id;
+    if (subscribeid === userid) {
+      ctx.throw('403', '不能关注自己!');
+    }
+    // 查询关注
+
+    const { SubscribeModel, User } = app.model;
+    const subInfo = await SubscribeModel.findOne({
+      user: userid,
+      channel: subscribeid,
+    });
+    if (subInfo) {
+      ctx.throw(401, '已经关注了');
+    }
+    const sub = new SubscribeModel({
+      user: userid,
+      channel: subscribeid,
+    });
+    const subDb = await sub.save();// 保存数据
+    if (subDb) {
+      const subUserInfo = await User.findById(subscribeid);
+      subUserInfo.subscribeCount++;
+      await subUserInfo.save();// 添加数据啥
+      ctx.body = subUserInfo;
+    } else {
+      ctx.throw(401, '关注失败!');
+    }
+
+  }
 }
 
 module.exports = UserController;

@@ -15,4 +15,7 @@ module.exports = app => {
   router.post('/users/login', controller.user.login);
   // 获取频道详情
   router.get('/users/info/:userid', auth(true), controller.user.userInfo);
+  // 关注频道
+  router.get('/users/subscribe/:subscribeid', auth(true), controller.user.subscribe);
+
 };

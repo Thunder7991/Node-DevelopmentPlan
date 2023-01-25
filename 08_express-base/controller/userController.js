@@ -31,12 +31,9 @@ exports.login = async (req, res) => {
 exports.update = async (req, res) => {
   // res.send(req.body)
   let id = req.user.userinfo._id;
-  console.log(id);
   let updateData = await User.findByIdAndUpdate(id, req.body, {
     new: true,
   });
-  console.log(updateData);
-  // res.send(req.body);
   res.status(202).json({ user: updateData });
 };
 //用户头像上传

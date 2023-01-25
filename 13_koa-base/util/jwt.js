@@ -15,19 +15,17 @@ module.exports.verifyToken = function (required = true) {
     if (token) {
       try {
         let userInfo = await verify(token, uuid);
-
         //用户信息
         ctx.user = userInfo;
-
-        await next();
       } catch (error) {
         ctx.throw(402, error);
       }
-    } else if (required) {
-      ctx.throw(402, '请传入token!');
-    } else {
+    } else if (!required) {
       await next();
+    } else {
+      ctx.throw(402, '请传入token!');
     }
+    await next();
   };
 };
 //生成token

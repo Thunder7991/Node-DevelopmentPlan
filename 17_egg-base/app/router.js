@@ -27,6 +27,8 @@ module.exports = app => {
   router.get('/video/getvideo/:videoid', auth(true), controller.vod.getvideo);
   // 添加视频评论
   router.get('/video/comment/:videoid', auth(true), controller.video.setcomment);
+  // 获取热度排名
+  router.get('/video/gethots', auth(false), controller.video.gethots);
 
 
 };

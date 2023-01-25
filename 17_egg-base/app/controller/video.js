@@ -38,6 +38,12 @@ class VideoController extends Controller {
       ctx.throw(501, '视频评论失败!');
     }
   }
+
+  // 获取热度排名redis
+  async gethots() {
+    const tops = await this.service.redishot.tophots(10);
+    this.ctx.body = tops;
+  }
 }
 
 module.exports = VideoController;

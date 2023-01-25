@@ -62,6 +62,7 @@ class VodController extends Controller {
       ctx.throw('404', '视频不存在!');
     }
   }
+  // 视频评论
 }
 
 module.exports = VodController;

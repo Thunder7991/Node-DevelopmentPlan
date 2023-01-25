@@ -25,6 +25,8 @@ module.exports = app => {
   // 开始上传(略)
   // 获取视频详情
   router.get('/video/getvideo/:videoid', auth(true), controller.vod.getvideo);
+  // 添加视频评论
+  router.get('/video/comment/:videoid', auth(true), controller.video.setcomment);
 
 
 };

@@ -20,5 +20,4 @@ export class Users extends Document {
   })
   password: string;
 }
-
 export const UserSchema = SchemaFactory.createForClass(Users);

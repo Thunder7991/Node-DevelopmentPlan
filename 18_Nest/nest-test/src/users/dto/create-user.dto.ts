@@ -7,4 +7,6 @@ export class CreateUserDto {
   readonly email: string;
   @ApiProperty({ description: '密码', default: '123456' })
   password: string;
+  @ApiProperty({ description: '用户名', default: 'moica' })
+  username: string;
 }

@@ -19,4 +19,4 @@
   ## fs - flag
   
 
-![encoding](E:\mydata\Node养成计划\19_NodeApi\01_fs\flag.jpg)
+![encoding](./flag.jpg)

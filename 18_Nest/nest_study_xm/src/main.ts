@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { VersioningType,Response } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
@@ -28,6 +28,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.useGlobalInterceptor(new Response());
   await app.listen(3000);
 }
 bootstrap();

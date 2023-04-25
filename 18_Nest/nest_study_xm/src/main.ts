@@ -30,8 +30,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.useGlobalInterceptor(new Response());
-  app.useGlobalInterceptor(new HttpFilter());
+
+  app.useGlobalInterceptors(new Response());
+  app.useGlobalFilters(new HttpFilter());
   await app.listen(3000);
 }
 bootstrap();

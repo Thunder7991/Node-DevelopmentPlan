@@ -9,6 +9,7 @@ import { UploadModule } from './upload/upload.module';
 import { UserService } from './user/user.service';
 import { PModule } from './p/p.module';
 import { LoginModule } from './login/login.module';
+import { SpiderModule } from './spider/spider.module';
 // app.module.ts 跟模块用于处理其他类的引用与共享.
 // app.controller.ts 常见功能是用来处理Http请求以及调用service层处理方法
 //app.service.ts 封账通用的业务逻辑,与数据层交互,其他额外的一些三方请求
@@ -20,6 +21,7 @@ import { LoginModule } from './login/login.module';
     UploadModule,
     PModule,
     LoginModule,
+    SpiderModule,
   ],
   controllers: [AppController, DemoController],
   providers: [

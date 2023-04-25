@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { VersioningType, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
@@ -33,6 +33,8 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new Response());
   app.useGlobalFilters(new HttpFilter());
+  //官方自带校验
+  app.useGlobalPipe(new ValidationPipe());
   await app.listen(3000);
 }
 bootstrap();

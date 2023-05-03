@@ -7,6 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Response } from './common/response';
 import { HttpFilter } from './common/filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 //第二种方式
 // import { RoleGuard } from './guard/role/role.guard';
 
@@ -37,8 +38,19 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpFilter());
   //官方自带校验
   app.useGlobalPipes(new ValidationPipe());
-  //第二种方式
+  //第二种方式 守卫
   // app.useGlobalGuards(new RoleGuard());
+
+  //swagger文档
+  const options = new DocumentBuilder()
+    .addBearerAuth()
+    .setTitle('thunderchen')
+    .setDescription('is best')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('/api-docs', app, document);
   await app.listen(3000);
 }
 bootstrap();

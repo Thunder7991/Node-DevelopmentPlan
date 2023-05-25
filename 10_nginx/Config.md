@@ -16,6 +16,12 @@
     }
     http { # http 服务器配置区
         sendfile on; # 是否去调用系统的sendfile文件
+        # 负载均衡
+        upstream test {
+            server test1.example.com  weight=1 max_fails=3 fail_timeout=30s; #max_fails:最大失败次数, weight:权重 , server: 指定 upstream成员
+            server test2.example.com;
+            server test3.example.com backup;  # backup: 备份
+        }
 
         tcp_nopush on;# nginx处理链接时,是否开启数据包累积 , 一起传输,提高效率
 
@@ -49,6 +55,14 @@
             index index.html # 目标文件
             location / { # location 不同请求路径配置区
                 # 具体配置选项
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $_adr;
+                #在原有的X-Forwarded-For字段值上追加当前服务器的IP地址
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                 # 请求交给名为nginx_boot的upstream上
+                proxy_pass:http://test; # 需要和upstream 命名相同
+                
+                
             }            
         }
     }

@@ -20,6 +20,8 @@ export class UserController {
   ) {}
   @Get('getTestName')
   getTestName() {
+    console.log(12);
+    
     return this.configService.get('TEST_VALUE').name;
   }
   @Post()

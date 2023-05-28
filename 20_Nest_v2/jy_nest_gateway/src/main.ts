@@ -9,6 +9,8 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { AllExceptionsFilter } from './common/exceptions/exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 
+declare const module: any;
+
 async function bootstrap() {
   //改造为 Fastify
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -25,6 +27,12 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor());
   // 异常过滤器
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
+
   await app.listen(3000);
 }
 bootstrap();

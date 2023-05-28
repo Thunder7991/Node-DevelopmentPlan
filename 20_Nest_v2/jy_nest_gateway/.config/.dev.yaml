@@ -1,3 +1,6 @@
 # 注意 yaml 配置的规则，缩进以及冒号 : 后的空格是经常容易出错的地方
-TEST_VALUE:
-  name: cookie
+FEISHU_CONFIG:
+  FEISHU_URL: https://open.feishu.cn/open-apis
+  FEISHU_API_HOST: https://open.feishu.cn
+  FEISHU_APP_ID: cli_a4f856a5c0b8500d
+  FEISHU_APP_SECRET: lRDqP57Eq95L89WVfyCnSgNU3JTrUbT3

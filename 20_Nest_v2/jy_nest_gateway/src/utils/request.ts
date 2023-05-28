@@ -1,12 +1,12 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-05-28 13:54:16
- * @LastEditTime: 2023-05-28 14:15:32
+ * @LastEditTime: 2023-05-28 17:14:39
  * @email: 853524319@qq.com
  * @Description:两种请求方法，一种是植入飞书请求的版本，另一种是自由请求
  */
 
-import axios from 'axios';
+import axios, { Method } from 'axios';
 import { getConfig } from './index';
 const {
   FEISHU_CONFIG: { FEISHU_URL },
@@ -18,7 +18,7 @@ const request = async ({ url, option = {} }) => {
   try {
     return axios.request({
       url,
-      option,
+      ...option,
     });
   } catch (error) {
     throw error;

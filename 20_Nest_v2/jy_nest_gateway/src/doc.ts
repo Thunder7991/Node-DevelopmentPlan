@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-05-28 13:15:50
- * @LastEditTime: 2023-05-28 13:26:29
+ * @LastEditTime: 2023-05-28 17:33:38
  * @email: 853524319@qq.com
  * @Description: swagger
  */
@@ -16,5 +16,9 @@ export const generateDocument = (app) => {
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/api/doc', app, document);
+  SwaggerModule.setup('/api/doc', app, document,{
+    swaggerOptions:{
+      displayRequestDuration: true,
+    }
+  });
 };

@@ -3,11 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 //环境配置 @nestjs/config
 import { ConfigModule } from '@nestjs/config';
-import { getConfig } from 'utils';
+import { getConfig } from '@/utils';
 import { UserModule } from './user/user.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       //环境变量使用yaml ,禁用dotenv
       ignoreEnvFile: true,

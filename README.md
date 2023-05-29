@@ -16,3 +16,7 @@ Recommended books : Web Development with Node and Express (Second edition)
 
 17_egg-base
 
+18_Nest : xiaoman(CSDN)
+
+20_Nest_v2 : CookieBoty(JueJin)
+

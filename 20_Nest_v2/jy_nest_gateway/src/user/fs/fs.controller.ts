@@ -19,7 +19,7 @@ export class FsController {
   @Post('sendMessage')
   sendMessage(@Body() params: FsMessageDto) {
     const { receive_id_type, ...rest } = params;
-    console.log(22,params);
+    console.log(22, params);
     return this.fsService.sendMessage(receive_id_type, rest);
   }
 }

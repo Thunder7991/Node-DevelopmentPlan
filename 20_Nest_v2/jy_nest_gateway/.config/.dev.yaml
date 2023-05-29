@@ -16,3 +16,14 @@ MONGODB_CONFIG:
   entities: "mongo"                  # 自定义加载类型
   logging: false                     # 数据库打印日志
   synchronize: true                  # 是否开启同步数据表功能
+
+MYSQL_CONFIG:
+  name: "user-test"
+  type: "mysql"
+  host: "localhost"
+  port: 3306
+  username: "xxxx"
+  password: "123456"
+  database: "user-test"
+  entities: "mysql" # 这里的命名一定要跟 MongoDB 里面的配置命名区分开
+  synchronize: true # 如果为false 需要自己建表

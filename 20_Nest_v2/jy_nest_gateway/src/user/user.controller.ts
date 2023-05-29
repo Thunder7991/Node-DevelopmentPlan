@@ -8,9 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { AddUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
@@ -18,16 +19,25 @@ export class UserController {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
+
+  @ApiOperation({
+    summary: '新增用户',
+  })
+  @Post('/add')
+  create(@Body() user: AddUserDto) {
+    return this.userService.createOrSave(user);
+  }
+
   @Get('getTestName')
   getTestName() {
     console.log(12);
 
     return this.configService.get('TEST_VALUE').name;
   }
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  // @Post()
+  // create(@Body() AddUserDto: AddUserDto) {
+  //   return this.userService.create(AddUserDto);
+  // }
 
   @Get()
   findAll() {

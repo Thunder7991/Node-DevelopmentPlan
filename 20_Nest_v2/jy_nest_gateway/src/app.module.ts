@@ -6,11 +6,17 @@ import { ConfigModule } from '@nestjs/config';
 import { getConfig } from '@/utils';
 import { UserModule } from './user/user.module';
 import { CacheModule } from '@nestjs/cache-manager';
+const redisStore = require('cache-manager-redis-store');
 
 @Module({
   imports: [
     CacheModule.register({
       isGlobal: true,
+      store: redisStore,
+      host: getConfig('REDIS_CONFIG').host,
+      port: getConfig('REDIS_CONFIG').port,
+      auth_pass: getConfig('REDIS_CONFIG').auth,
+      db: getConfig('REDIS_CONFIG').db,
     }),
     ConfigModule.forRoot({
       //环境变量使用yaml ,禁用dotenv

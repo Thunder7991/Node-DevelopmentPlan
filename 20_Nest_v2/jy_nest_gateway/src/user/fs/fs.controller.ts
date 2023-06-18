@@ -6,7 +6,7 @@ import {
   Version,
 } from '@nestjs/common';
 import { FsService } from './fs.service';
-import { FsMessageDto } from './fs.dto';
+import { FsMessageDto, GetUserTokenDto } from './fs.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('fs')
 @Controller('fs')
@@ -21,5 +21,14 @@ export class FsController {
     const { receive_id_type, ...rest } = params;
     console.log(22, params);
     return this.fsService.sendMessage(receive_id_type, rest);
+  }
+
+  @ApiOperation({
+    summary: '获取用户凭证',
+  })
+  @Post('getUserToken')
+  getUserToken(@Body() params: GetUserTokenDto) {
+    const { code } = params;
+    return this.fsService.getUserToken(code);
   }
 }

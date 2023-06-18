@@ -14,6 +14,7 @@ import { AllExceptionsFilter } from './common/exceptions/exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 import { generateDocument } from './doc';
 import { FastifyLogger } from './common/logger';
+import fastifyCookie from '@fastify/cookie';
 
 declare const module: any;
 
@@ -37,7 +38,10 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   // 启动全局字段校验，保证请求接口字段校验正确。
   app.useGlobalPipes(new ValidationPipe());
-  //开启默认Loger
+
+  app.register(fastifyCookie, {
+    secret: 'my-secret', // for cookies signature
+  });
   //热更新
   if (module.hot) {
     module.hot.accept();

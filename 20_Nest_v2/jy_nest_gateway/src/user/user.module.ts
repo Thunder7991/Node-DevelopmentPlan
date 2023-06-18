@@ -7,9 +7,13 @@ import { UserProviders } from './user.providers';
 import { DatabaseModule } from '@/common/database/database.module';
 
 @Module({
-  imports: [DatabaseModule],
+  // imports: [DatabaseModule],
+  imports: [],
+
   controllers: [UserController, FsController],
-  providers: [...UserProviders, UserService, FsService],
+  // providers: [...UserProviders, UserService, FsService],
+  providers: [UserService, FsService],
+
   exports: [UserService],
 })
 export class UserModule {}

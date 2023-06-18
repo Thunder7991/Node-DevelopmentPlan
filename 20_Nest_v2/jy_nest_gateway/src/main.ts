@@ -20,7 +20,9 @@ async function bootstrap() {
   //改造为 Fastify
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      logger: true,
+    }),
   );
   //添加版本化管理 : 需要兼容老项目的情况。此时就会存在多种版本的 Api，所以我们也在工程添加版本控制来避免未来升级的时候，造成其他系统崩溃。
   app.enableVersioning({
@@ -34,6 +36,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   // 启动全局字段校验，保证请求接口字段校验正确。
   app.useGlobalPipes(new ValidationPipe());
+  //开启默认Loger
   //热更新
   if (module.hot) {
     module.hot.accept();

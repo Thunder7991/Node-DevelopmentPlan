@@ -6,12 +6,9 @@ import { User } from './entities/user.mongo.entity';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @Inject('USER_REPOSITORY')
-    private userRepository: MongoRepository<User>,
-  ) {}
+  constructor() {} // private userRepository: MongoRepository<User>, // @Inject('USER_REPOSITORY')
   createOrSave(user) {
-    return this.userRepository.save(user);
+    // return this.userRepository.save(user);
   }
   // create(createUserDto: AddUserDto) {
   //   return 'This action adds a new user';

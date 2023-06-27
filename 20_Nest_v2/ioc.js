@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-05-27 20:06:20
- * @LastEditTime: 2023-05-27 20:06:20
+ * @LastEditTime: 2023-06-27 23:57:20
  * @email: 853524319@qq.com
  * @Description:  控制反转
  */
@@ -30,6 +30,7 @@ new B('hello').run()
 // 为了解决这个问题, 可以引入IOC容器
 
 class Container {
+  
     constructor() { this.modules = {} }
   
     provide(key, object) { this.modules[key] = object }

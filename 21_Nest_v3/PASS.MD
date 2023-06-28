@@ -79,7 +79,70 @@ export class PersonController {
 
 
 
+#### 调试
 
+输入命令
 
+```js
+node --inspect-brk index.js
+```
 
+--inspect 是调试模式运行，--inspect-brk还会再首行断住
+
+可以使用Chrome DevTools 进行调试
+
+在浏览器中输入：
+
+```js
+chrome://inspect/#devices
+```
+
+![devtools](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230628231918207.png)
+
+点击下方的**inspect**进行调试
+
+在nest项目中同理：
+
+```js
+pnpm run start:debug
+
+或者
+
+nest start --debug
+```
+
+原理就是 **node --inspect** （不是 -brk）
+
+##### 通过vscode调试
+
+创建launch.json文件，他会再根目录中 .vscode/launch.json 
+
+```js
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        //调试JS文件
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "启动程序",
+            "stopOnEntry": true, //首行断住和 --inspect-brk 一样的效果
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/index.js"
+        }
+    ]
+}
+```
 

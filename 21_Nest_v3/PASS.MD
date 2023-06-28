@@ -146,3 +146,45 @@ nest start --debug
 }
 ```
 
+对于nest项目先`nest start --debug`启动nest服务，然后根据上述的配置，启动调试即可
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230628235440501.png)
+
+
+
+##### vscode第三种
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230629001913443.png)
+
+
+
+还有一种是npm scripts ， launch.json配置文件如下：
+
+```js
+ {
+            "type": "node",
+            "request": "launch",
+            "name": "debug nest",
+            "runtimeExecutable": "npm",
+            "args": [
+                "run",
+                "start:dev",
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "console": "integratedTerminal",
+        }
+```
+
+
+
+选择 `debug nest`启动调试工具
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230629002037490.png)
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230629002100434.png)
+
+
+
+> 需要注意的是，此时项目必须和.vscode文件在同一目录下

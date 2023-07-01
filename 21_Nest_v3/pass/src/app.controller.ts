@@ -5,10 +5,11 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(
     @Inject('app_service') private readonly appService: AppService,
-    @Inject('pserson') private readonly person: { name: string; age: number },
-    @Inject('pserson2')
+    // private readonly appService: AppService,
+    @Inject('person') private readonly person: { name: string; age: number },
+    @Inject('person2')
     private readonly person2: { name: string; desc: string },
-    @Inject('pserson5')
+    @Inject('person5')
     private readonly persion5: { name: string; desc: string },
   ) {}
 

@@ -188,3 +188,239 @@ nest start --debug
 
 
 > 需要注意的是，此时项目必须和.vscode文件在同一目录下
+
+
+
+### AOP框架
+
+**AOP 的好处是可以把一些通用逻辑分离到切面中，保持业务逻辑的纯粹性，这样切面逻辑可以复用，还可以动态的增删。**
+
+
+
+实现AOP的方式有很多
+
+**中间件Middleware**
+
+```js
+const app = await NestFactory.create(AppModule);
+app.use(logger)
+await app.listen(3000)
+```
+
+针对某个路由来说的，范围更小一些：
+
+```js
+export class AppModule implements NestModule {
+ configure(consumer:MiddlewareConsumer) {
+ 	consumer.apply(LoggerMiddleware).forRoutes('cats');
+ }
+}
+```
+
+
+
+### Guard
+
+```js
+@Injectable()
+export class RolesGuard implements CanActivate {
+	canActivate(
+		context:ExecutionContext,
+	):boolean | Promise<boolean> | Observable<boolean>{
+	return true
+   }
+}
+```
+
+Guard 要实现 CanActivate 接口，实现 canActivate 方法，可以从 context 拿到请求的信息，然后做一些权限验证等处理之后返回 true 或者 false。
+
+使用
+
+```js
+@Controller('cats')
+@UseGuards(RolesGuard)
+export class CatsController {}
+```
+
+全局开启：
+
+```js
+const app = await NestFactory.create(AppModole);
+app.useGlobalGuard(new RolesGuard());
+```
+
+### Interceptor
+
+拦截器
+
+```js
+import {Observable} from 'rxjs'
+improt {tap} from 'rxjs/operators'
+
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor{
+	intercept(context:ExectionContext,next:CallHandler):Objservable<any>{
+		const now = Date.now()
+		return next.handle().pipe(tap(() => console.log()))
+	}
+
+}
+```
+
+Interceptor 要实现 NestInterceptor 接口，实现 intercept 方法，调用 next.handle() 就会调用目标 Controller，可以在之前和之后加入一些处理逻辑。
+
+
+
+作用于单独的路由
+
+```js
+@UseInterceptors(new LoggingInterceptor())
+export class CatsController {}
+```
+
+作用于全局
+
+```js
+const app = await NestFactory.create(ApplicationModule);
+app.useGlobalInterceptors(new LoggingInterceptor())
+```
+
+### Pipe
+
+Pipe 是管道的意思，用来对参数做一些检验和转换：
+
+实现方式
+
+```js
+@Injectable()
+export class ValidationPipe implements PipeTransform{
+	transform(value:any,metadata:ArgumentMetadata) {
+		return value;
+	}
+}
+```
+
+9个内置的pipe
+
+- ValidationPipe
+- ParseIntPipe
+- ParseBoolPipe
+- ParseArrayPipe
+- ParseUUIDPipe
+- DefaultValuePipe
+- ParseEnumPipe
+- ParseFloatPipe
+- ParseFilePipe
+
+针对某个参数
+
+```js
+@Controller()
+export class AppController {
+    constructor(private readonly appService:AppService){}
+    @Get()
+    hello(@Param('aaa',ParseIntPipe)aaa:number){
+        return 'hello'
+    }
+}
+```
+
+针对某个路由
+
+```js
+@Post()
+@UsePipes(ValidationPipe)
+async create(@Body() createCatDto:CreateCatDto) {
+	this.catsService.create(createCatDto)
+}
+```
+
+针对全局
+
+```js
+async funciton bootstrap (){
+	const app = await NestFactory.create(AppModule)
+	app.useGlobalPipes(new ValidationPipe())
+	await app.listen(3000)
+}
+bootstrap()
+```
+
+### ExceptionFilter
+
+ExceptionFilter 可以对抛出的异常做处理，返回对应的响应：
+
+```js
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+	catch(exception:HttpException,host:ArgumentsHost) {
+        const ctx= host.switchToHttp();
+        const response = ctx.getResponse<Response>()
+        const request = ctx.getRequest<Request>()
+        const status = exception.getStatus()
+        
+        response.status(status).json({
+            statusCode:status,
+            timestamp:new Date().toISOString(),
+            path:request.url
+        })
+    }
+}
+```
+
+Nest 内置了很多 http 相关的异常，都是 HttpException 的子类：
+
+- BadRequestException
+- UnauthorizedException
+- NotFoundException
+- ForbiddenException
+- NotAcceptableException
+- RequestTimeoutException
+- ConflictException
+- GoneException
+- PayloadTooLargeException
+- UnsupportedMediaTypeException
+- UnprocessableException
+- InternalServerErrorException
+- NotImplementedException
+- BadGatewayException
+- ServiceUnavailableException
+- GatewayTimeoutException
+
+自己扩展
+
+```js
+export class ForbiddenException extends HttpException {
+	constructor() {
+		super('Forbidden',HttpStatus.FORBIDDEN)
+	}
+}
+```
+
+**Nest 通过这样的方式实现了异常到响应的对应关系，代码里只要抛出不同的异常，就会返回对应的响应，很方便。**
+
+某个路由：
+
+```js
+@Post()
+@UseFilters(new HttpExceptionFilter())
+async create(@Body() createCatDto:createCatDto) {
+    throw new ForbiddenException()
+}
+```
+
+全局：
+
+```js
+async function bootstrap() {
+	const app = await NestFactory.create(AppModule);
+    app.useGlobalFilters(new HttpExceptionFilter());
+    await app.listen(3000)
+}
+```
+
+
+
+AOP执行顺序：
+
+> 会先调用 Guard，Guard 用于判断路由有没有权限访问，然后会调用 Interceptor，对 Contoller 前后扩展一些逻辑，在到达目标 Controller 之前，还会调用 Pipe 来对参数做检验和转换。所有的 HttpException 的异常都会被 ExceptionFilter 处理，返回不同的响应。

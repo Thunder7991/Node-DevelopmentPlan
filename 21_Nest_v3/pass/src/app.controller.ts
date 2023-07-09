@@ -6,6 +6,7 @@ import {
   SetMetadata,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GuardGuard } from './guard/guard.guard';
@@ -23,10 +24,14 @@ import { AaaException } from './filter/AaaException';
 import { FilterguardGuard } from './filterguard/filterguard.guard';
 import { Roles } from './role/role.decorator';
 import { Role } from './role/role';
+import { MdGuardGuard } from './md-guard/md-guard.guard';
+import { MdInterInterceptor } from './md-inter/md-inter.interceptor';
 
 // @Controller()
 // @Hhh()
 @Iii('thunder', 'chen')
+//可以放到Class上
+@SetMetadata('rolesArr', ['admin'])
 export class AppController {
   constructor(
     @Inject('app_service') private readonly appService: AppService,
@@ -83,6 +88,15 @@ export class AppController {
   @Roles(Role.Admin)
   getHello7(): string {
     throw new AaaException('aaa', 'bbb');
+    return this.appService.getHello();
+  }
+
+  //metaData 元数据
+  @Get('metadata')
+  @UseGuards(MdGuardGuard)
+  @UseInterceptors(MdInterInterceptor)
+  @SetMetadata('rolesArr', ['admin'])
+  getHello8(): string {
     return this.appService.getHello();
   }
 }

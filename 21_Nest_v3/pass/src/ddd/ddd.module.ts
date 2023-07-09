@@ -4,6 +4,6 @@ import { DddController } from './ddd.controller';
 
 @Module({
   controllers: [DddController],
-  providers: [DddService]
+  providers: [DddService],
 })
 export class DddModule {}

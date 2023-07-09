@@ -453,3 +453,25 @@ AOP执行顺序：
 @Header：修改响应头
 @Redirect：指定重定向的 url
 @Render：指定渲染用的模版引擎
+
+### Nest初识原理
+
+
+
+@Module源码：
+
+```js
+import { Module } from '@nestjs/common';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+@Module({
+  controllers: [CatsController],
+  providers: [CatsService],
+})
+export class CatsModule {}
+```
+
+
+
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f2bb578b9b624bf993aaedc250ec053d~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)

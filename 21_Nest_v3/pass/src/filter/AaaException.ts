@@ -1,6 +1,3 @@
 export class AaaException {
-  constructor(public aaa: string, public bbb: string) {
-
-    
-  }
+  constructor(public aaa: string, public bbb: string) {}
 }

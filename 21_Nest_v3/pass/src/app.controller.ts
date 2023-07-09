@@ -4,6 +4,7 @@ import {
   Headers,
   Inject,
   SetMetadata,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -17,6 +18,11 @@ import {
   MyHeaders,
   MyQuery,
 } from './decorator/decorator.decorator';
+import { FilterFilter } from './filter/filter.filter';
+import { AaaException } from './filter/AaaException';
+import { FilterguardGuard } from './filterguard/filterguard.guard';
+import { Roles } from './role/role.decorator';
+import { Role } from './role/role';
 
 // @Controller()
 // @Hhh()
@@ -68,5 +74,15 @@ export class AppController {
   @Fff('hello6', 'thunderchen')
   getHello6(@Headers('Accept') Header, @MyQuery('chen') query) {
     console.log('query', query);
+  }
+
+  //路由级别使用Aaafilter
+  @Get('filter')
+  @UseFilters(FilterFilter)
+  @UseGuards(FilterguardGuard)
+  @Roles(Role.Admin)
+  getHello7(): string {
+    throw new AaaException('aaa', 'bbb');
+    return this.appService.getHello();
   }
 }

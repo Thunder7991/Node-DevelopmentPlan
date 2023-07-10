@@ -10,6 +10,7 @@ import { ModuleaModule } from './modulea/modulea.module';
 import { ModulebModule } from './moduleb/moduleb.module';
 import { ProviderAService } from './provider-a/provider-a.service';
 import { ProviderBService } from './provider-b/provider-b.service';
+import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 
 @Module({
   imports: [
@@ -20,6 +21,10 @@ import { ProviderBService } from './provider-b/provider-b.service';
     DddModule,
     ModuleaModule,
     ModulebModule,
+    DynamicModuleModule.register({
+      aaa: 1,
+      bbb: 2,
+    }),
   ],
   controllers: [AppController],
   // providers: [AppService],

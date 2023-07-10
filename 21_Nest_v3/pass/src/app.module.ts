@@ -6,9 +6,21 @@ import { AaaModule } from './aaa/aaa.module';
 import { BbbModule } from './bbb/bbb.module';
 import { CccModule } from './ccc/ccc.module';
 import { DddModule } from './ddd/ddd.module';
+import { ModuleaModule } from './modulea/modulea.module';
+import { ModulebModule } from './moduleb/moduleb.module';
+import { ProviderAService } from './provider-a/provider-a.service';
+import { ProviderBService } from './provider-b/provider-b.service';
 
 @Module({
-  imports: [PersonModule, AaaModule, BbbModule, CccModule, DddModule],
+  imports: [
+    PersonModule,
+    AaaModule,
+    BbbModule,
+    CccModule,
+    DddModule,
+    ModuleaModule,
+    ModulebModule,
+  ],
   controllers: [AppController],
   // providers: [AppService],
   providers: [
@@ -74,6 +86,8 @@ import { DddModule } from './ddd/ddd.module';
         };
       },
     },
+    ProviderAService,
+    ProviderBService,
   ],
 })
 export class AppModule {}

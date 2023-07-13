@@ -3,6 +3,8 @@ import {
   Get,
   Headers,
   Inject,
+  Next,
+  Response,
   SetMetadata,
   UseFilters,
   UseGuards,
@@ -98,5 +100,37 @@ export class AppController {
   @SetMetadata('rolesArr', ['admin'])
   getHello8(): string {
     return this.appService.getHello();
+  }
+
+  @Get('midd1')
+  getMidd1(): string {
+    console.log('midd1');
+    return this.appService.getHello();
+  }
+  @Get('midd2')
+  getMidd2(): string {
+    console.log('midd2');
+    return this.appService.getHello();
+  }
+
+  @Get('ware1')
+  getMidd3(): string {
+    console.log('ware1');
+    return this.appService.getHello();
+  }
+
+  // @Get('aaa')
+  // nest(@Next() next, @Response({ passthrough: false }) response) {
+  //   console.log(next, response);
+  //   return 'hello';
+  // }
+  @Get('aaa')
+  nest(@Next() next) {
+    next();
+    return 'hello'; //hello2
+  }
+  @Get('aaa')
+  b2() {
+    return 'hello2';
   }
 }

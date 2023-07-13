@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 export class MdInterInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     console.log('interceptor');
+    console.log(next.handle());
+
     return next.handle();
   }
 }

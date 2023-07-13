@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -11,6 +16,7 @@ import { ModulebModule } from './moduleb/moduleb.module';
 import { ProviderAService } from './provider-a/provider-a.service';
 import { ProviderBService } from './provider-b/provider-b.service';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
+import { MiddMiddleware } from './midd/midd.middleware';
 
 @Module({
   imports: [
@@ -95,4 +101,18 @@ import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
     ProviderBService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    //设置所有路由
+    // consumer.apply(MiddMiddleware).forRoutes('*');
+
+    //设置 midd1
+    consumer
+      .apply(MiddMiddleware)
+      .forRoutes({ path: 'thunder/midd*', method: RequestMethod.GET });
+
+    consumer
+      .apply(MiddMiddleware)
+      .forRoutes({ path: 'thunder/ware*', method: RequestMethod.GET });
+  }
+}

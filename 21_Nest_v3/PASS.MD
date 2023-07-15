@@ -518,3 +518,19 @@ nest 的 interceptor 就用了 rxjs 来处理响应，但常用的 operator 也�
 
 
 总之，rxjs 的 operator 多，但是适合在 nest interceptor 里用的也不多。
+
+
+
+#### Pipe
+
+内置的Pipe有这些：
+
+- ValidationPipe
+- ParseIntPipe
+- ParseBoolPipe
+- ParseArrayPipe
+- ParseUUIDPipe
+- DefaultValuePipe
+- ParseEnumPipe
+- ParseFloatPipe
+- ParseFilePipe

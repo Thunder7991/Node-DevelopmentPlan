@@ -19,6 +19,7 @@ import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { MiddMiddleware } from './midd/midd.middleware';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
+import { TestPipeModule } from './test-pipe/test-pipe.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
       aaa: 1,
       bbb: 2,
     }),
+    TestPipeModule,
   ],
   controllers: [AppController],
   // providers: [AppService],

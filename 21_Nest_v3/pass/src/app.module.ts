@@ -17,6 +17,8 @@ import { ProviderAService } from './provider-a/provider-a.service';
 import { ProviderBService } from './provider-b/provider-b.service';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { MiddMiddleware } from './midd/midd.middleware';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
 
 @Module({
   imports: [
@@ -99,6 +101,12 @@ import { MiddMiddleware } from './midd/midd.middleware';
     },
     ProviderAService,
     ProviderBService,
+    // 但很多情况下我们是需要全局 interceptor 的，而且还用到一些 provider
+    // 使用这种方式注册拦截器
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TestRxmapInterceptor,
+    },
   ],
 })
 export class AppModule implements NestModule {

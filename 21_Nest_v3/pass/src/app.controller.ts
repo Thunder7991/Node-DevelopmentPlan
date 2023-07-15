@@ -28,6 +28,11 @@ import { Roles } from './role/role.decorator';
 import { Role } from './role/role';
 import { MdGuardGuard } from './md-guard/md-guard.guard';
 import { MdInterInterceptor } from './md-inter/md-inter.interceptor';
+import { TextRxInterceptor } from './text-rx/text-rx.interceptor';
+import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
+import { TestRxtapInterceptor } from './test-rxtap/test-rxtap.interceptor';
+import { TestRxcatcherrorInterceptor } from './test-rxcatcherror/test-rxcatcherror.interceptor';
+import { TextRxtimeoutInterceptor } from './text-rxtimeout/text-rxtimeout.interceptor';
 
 // @Controller()
 // @Hhh()
@@ -61,12 +66,24 @@ export class AppController {
   @Get('hello')
   @Decorator('decorator')
   @UseGuards(GuardGuard)
-  getHello2(): string {
+  //局部使用interceptor
+  @UseInterceptors(
+    TextRxInterceptor,
+    // TestRxmapInterceptor,
+    TestRxtapInterceptor,
+    TestRxcatcherrorInterceptor,
+    TextRxtimeoutInterceptor,
+  )
+  // @UseInterceptors(TestRxmapInterceptor)
+  async getHello2() {
+    // throw new Error('xxxx');
+    await new Promise<void>((resolve) => setTimeout(resolve, 4000));
     return this.appService.getHello();
   }
 
   @Fff('hello2', 'thunderchen')
   getHello3(@Ggg() c): string {
+    console.log(73, c);
     return this.appService.getHello();
   }
 

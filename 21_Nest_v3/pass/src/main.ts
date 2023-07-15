@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { FilterFilter } from './filter/filter.filter';
+import { TextRxInterceptor } from './text-rx/text-rx.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
   // setTimeout(() => {
   //   app.close();
   // }, 3000);
+  //全局使用拦截器 , 全局不能注入依赖
+  // app.useGlobalInterceptors(new TextRxInterceptor());
   await app.listen(3000);
 }
 bootstrap();

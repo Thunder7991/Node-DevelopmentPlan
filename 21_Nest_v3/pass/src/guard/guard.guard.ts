@@ -14,9 +14,9 @@ export class GuardGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log(context.getHandler());
+    console.log(17, context.getHandler());
 
-    console.log(this.reflector.get('decorator', context.getHandler()));
+    console.log(19, this.reflector.get('decorator', context.getHandler()));
 
     console.log(21, this.reflector.get('iii', context.getClass()));
 

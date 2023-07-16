@@ -534,3 +534,21 @@ nest 的 interceptor 就用了 rxjs 来处理响应，但常用的 operator 也�
 - ParseEnumPipe
 - ParseFloatPipe
 - ParseFilePipe
+
+
+
+#### class-validator
+
+它的实现原理是基于 class-tranformer 把参数对象转换为 dto class 的对象，然后通过 class-validator 基于装饰器对这个对象做验证。
+
+
+
+我们可以自己实现这样的 pipe，pipe 里可以注入依赖。
+
+
+
+如果是全局 pipe 想注入依赖，需要通过 APP_PIPE 的 token 在 AppModule 里声明 provider。
+
+
+
+class-validator 支持很多种验证规则，比如邮箱、域名、长度、值的范围等，而且错误消息也可以自定义。

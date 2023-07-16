@@ -17,9 +17,10 @@ import { ProviderAService } from './provider-a/provider-a.service';
 import { ProviderBService } from './provider-b/provider-b.service';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { MiddMiddleware } from './midd/midd.middleware';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
 import { TestPipeModule } from './test-pipe/test-pipe.module';
+import { CustomPipePipe } from './custom-pipe/custom-pipe.pipe';
 
 @Module({
   imports: [

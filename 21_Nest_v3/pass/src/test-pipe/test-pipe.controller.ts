@@ -15,11 +15,13 @@ import {
   ParseEnumPipe,
   ParseUUIDPipe,
   DefaultValuePipe,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TestPipeService } from './test-pipe.service';
 import { CreateTestPipeDto } from './dto/create-test-pipe.dto';
 import { UpdateTestPipeDto } from './dto/update-test-pipe.dto';
 import { CustomPipePipe } from 'src/custom-pipe/custom-pipe.pipe';
+import { Ppp } from './dto/Ppp.dto';
 
 enum Ggg {
   Aaa = '111',
@@ -30,9 +32,13 @@ enum Ggg {
 @Controller('test-pipe')
 export class TestPipeController {
   constructor(private readonly testPipeService: TestPipeService) {}
+  //pipe test
+  @Post('pipetest')
+  create(@Body(new ValidationPipe()) createTestPipeDto: CreateTestPipeDto) {
+    //切换为自定义的valudation , 如果在module中自定义factory， 需要省略new ...() ， 如果是全局注册需要去掉 CustomPipePipe
+    // create(@Body() createTestPipeDto: CreateTestPipeDto) {
+    console.log(39, createTestPipeDto);
 
-  @Post()
-  create(@Body() createTestPipeDto: CreateTestPipeDto) {
     return this.testPipeService.create(createTestPipeDto);
   }
   // @Get('/:aa')
@@ -106,6 +112,10 @@ export class TestPipeController {
   @Get('pipe/:id')
   findOne(@Param('id', CustomPipePipe) id: string) {
     return this.testPipeService.findOne(+id);
+  }
+  @Post('ppp')
+  ppp(@Body(new ValidationPipe()) post: Ppp) {
+    console.log(118, '参数正确的时候是不会报错的。');
   }
 
   @Patch(':id')

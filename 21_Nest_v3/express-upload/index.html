@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <input type="file" id="fileInput" multiple />
+
+    <script>
+      const fileInput = document.querySelector('#fileInput');
+      async function formData() {
+        const data = new FormData();
+        data.set('name', 'thunder');
+        data.set('age', 20);
+        // [...fileInput.files].forEach(item => {
+        //     data.append('bbb', item)
+        // })
+
+        data.set('aaa', fileInput.files[0]);
+        data.set('bbb', fileInput.files[1]);
+        data.set('ccc', fileInput.files[2]);
+        data.set('ddd', fileInput.files[3]);
+
+        const res = await axios.post('http://localhost:3333/ddd', data);
+        console.log(res);
+      }
+      fileInput.onchange = formData;
+    </script>
+  </body>
+</html>

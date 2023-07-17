@@ -1,10 +1,14 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   Headers,
+  HttpException,
   Inject,
+  MaxFileSizeValidator,
   Next,
+  ParseFilePipe,
   Post,
   Response,
   SetMetadata,
@@ -44,6 +48,8 @@ import {
   FilesInterceptor,
 } from '@nestjs/platform-express';
 import { storage } from './storage/uploadStorage';
+import { FileSizeValidationPipePipe } from './file-size-validation-pipe/file-size-validation-pipe.pipe';
+import { MyFileValidator } from './customFileValidator/customFileValidator';
 
 // @Controller()
 // @Hhh()
@@ -216,10 +222,53 @@ export class AppController {
     }),
   )
   uploadAnyFiles(
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
     @Body() body,
   ) {
     console.log('body', body);
     console.log('files', files);
+  }
+
+  @Post('validationUpload')
+  @UseInterceptors(
+    FileInterceptor('aaa', {
+      dest: 'uploads',
+      // storage: storage,
+    }),
+  )
+  uploadFileValidation(
+    @UploadedFiles(FileSizeValidationPipePipe)
+    files: Express.Multer.File,
+    @Body() body,
+  ) {
+    console.log('body', body);
+    console.log('files', files);
+  }
+
+  @Post('parseFileUpload')
+  @UseInterceptors(
+    FileInterceptor('aaa', {
+      dest: 'uploads',
+    }),
+  )
+  uploadFile3(
+    @UploadedFile(
+      new ParseFilePipe({
+        exceptionFactory(error) {
+          throw new HttpException('xxx' + error, 404);
+        },
+        validators: [
+          new MyFileValidator({}),
+          new MaxFileSizeValidator({ maxSize: 1000 }),
+          new FileTypeValidator({ fileType: 'image/jpeg' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() body,
+  ) {
+    console.log('body', body);
+    console.log('file', file);
   }
 }

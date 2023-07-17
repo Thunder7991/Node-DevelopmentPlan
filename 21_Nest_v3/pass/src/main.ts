@@ -6,7 +6,9 @@ import { FilterFilter } from './filter/filter.filter';
 import { TextRxInterceptor } from './text-rx/text-rx.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true, //支持跨域
+  });
 
   //静态资源
   app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/static' });

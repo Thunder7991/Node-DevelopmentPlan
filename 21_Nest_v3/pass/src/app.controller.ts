@@ -1,11 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
   Headers,
   Inject,
   Next,
+  Post,
   Response,
   SetMetadata,
+  UploadedFile,
+  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -33,6 +37,13 @@ import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
 import { TestRxtapInterceptor } from './test-rxtap/test-rxtap.interceptor';
 import { TestRxcatcherrorInterceptor } from './test-rxcatcherror/test-rxcatcherror.interceptor';
 import { TextRxtimeoutInterceptor } from './text-rxtimeout/text-rxtimeout.interceptor';
+import {
+  AnyFilesInterceptor,
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
+import { storage } from './storage/uploadStorage';
 
 // @Controller()
 // @Hhh()
@@ -149,5 +160,66 @@ export class AppController {
   @Get('aaa')
   b2() {
     return 'hello2';
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('upload', {
+      dest: 'uploads', // 运行脚本的时候自动创建uploads目录
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
+    console.log('body', body);
+    console.log('file', file);
+  }
+
+  @Post('uploads')
+  @UseInterceptors(
+    FilesInterceptor('uploads', 2, {
+      dest: 'uploads', // 运行脚本的时候自动创建uploads目录
+    }),
+  )
+  uploadFiles(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() body,
+  ) {
+    console.log('body', body);
+    console.log('files', files);
+  }
+
+  @Post('uploadnext')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'aaa', maxCount: 2 },
+        { name: 'bbb', maxCount: 3 },
+      ],
+      {
+        dest: 'uploads',
+      },
+    ),
+  )
+  uploadFileFields(
+    @UploadedFiles()
+    files: { aaa?: Express.Multer.File[]; bbb?: Express.Multer.File[] },
+    @Body() body,
+  ) {
+    console.log('body', body);
+    console.log('files', files);
+  }
+
+  @Post('anyupload')
+  @UseInterceptors(
+    AnyFilesInterceptor({
+      // dest: 'uploads',
+      storage: storage,
+    }),
+  )
+  uploadAnyFiles(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() body,
+  ) {
+    console.log('body', body);
+    console.log('files', files);
   }
 }

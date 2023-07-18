@@ -5,6 +5,8 @@ import { UpdateCccDto } from './dto/update-ccc.dto';
 @Injectable()
 export class CccService {
   create(createCccDto: CreateCccDto) {
+    console.log(createCccDto);
+
     return 'This action adds a new ccc';
   }
 

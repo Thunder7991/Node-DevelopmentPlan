@@ -6,6 +6,7 @@ import {
   Headers,
   HttpException,
   Inject,
+  Logger,
   MaxFileSizeValidator,
   Next,
   ParseFilePipe,
@@ -57,6 +58,7 @@ import { MyFileValidator } from './customFileValidator/customFileValidator';
 //可以放到Class上
 @SetMetadata('rolesArr', ['admin'])
 export class AppController {
+  private logger = new Logger();
   constructor(
     @Inject('app_service') private readonly appService: AppService,
     // private readonly appService: AppService,
@@ -270,5 +272,15 @@ export class AppController {
   ) {
     console.log('body', body);
     console.log('file', file);
+  }
+
+  @Get('logger')
+  getLoggerHello(): string {
+    this.logger.debug('aaa', AppController.name);
+    this.logger.error('bbb', AppController.name);
+    this.logger.log('ccc', AppController.name);
+    this.logger.verbose('ddd', AppController.name);
+    this.logger.warn('eee', AppController.name);
+    return this.appService.getHello();
   }
 }

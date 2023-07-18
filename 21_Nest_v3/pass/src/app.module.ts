@@ -21,6 +21,11 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TestRxmapInterceptor } from './test-rxmap/test-rxmap.interceptor';
 import { TestPipeModule } from './test-pipe/test-pipe.module';
 import { CustomPipePipe } from './custom-pipe/custom-pipe.pipe';
+import { MyLogger3 } from './customLogger/MyLogger';
+import { LoggerModule } from './logger/logger.module';
+import { Logger2Module } from './logger/logger2.module';
+
+import { TestloggermoduleModule } from './testloggermodule/testloggermodule.module';
 
 @Module({
   imports: [
@@ -36,6 +41,13 @@ import { CustomPipePipe } from './custom-pipe/custom-pipe.pipe';
       bbb: 2,
     }),
     TestPipeModule,
+    // LoggerModule,
+    TestloggermoduleModule,
+    //全局导入模块
+    Logger2Module.register({
+      xxx: 1,
+      yyy: 2,
+    }),
   ],
   controllers: [AppController],
   // providers: [AppService],
@@ -110,6 +122,8 @@ import { CustomPipePipe } from './custom-pipe/custom-pipe.pipe';
       provide: APP_INTERCEPTOR,
       useClass: TestRxmapInterceptor,
     },
+
+    MyLogger3,
   ],
 })
 export class AppModule implements NestModule {

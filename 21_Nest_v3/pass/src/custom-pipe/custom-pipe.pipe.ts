@@ -24,7 +24,7 @@ export class CustomPipePipe implements PipeTransform {
     //type 就是 @Query、@Param、@Body 装饰器，或者自定义装饰器：
     //而 metatype 是参数的 ts 类型：
     //data 是传给 @Query、@Param、@Body 等装饰器的参数。
-    console.log(metadata);
+    console.log(27, metadata);
 
     //class-transformer and class-validator
     //metatype 就是拿到dto文件中的校验

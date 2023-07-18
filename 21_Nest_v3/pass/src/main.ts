@@ -4,12 +4,7 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { FilterFilter } from './filter/filter.filter';
 import { TextRxInterceptor } from './text-rx/text-rx.interceptor';
-import {
-  MyLogger,
-  MyLogger2,
-  MyLogger3,
-  MyLogger4,
-} from './customLogger/MyLogger';
+import { MyLogger3 } from './customLogger/MyLogger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

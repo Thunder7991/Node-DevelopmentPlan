@@ -41,7 +41,7 @@ import { TestloggermoduleModule } from './testloggermodule/testloggermodule.modu
       bbb: 2,
     }),
     TestPipeModule,
-    // LoggerModule,
+    LoggerModule,
     TestloggermoduleModule,
     //全局导入模块
     Logger2Module.register({

@@ -18,7 +18,6 @@ export class TestloggermoduleController {
   constructor(
     private readonly testloggermoduleService: TestloggermoduleService,
     // 这个模块里可以直接注入 MyLogger2，不用 imports 那个 Module。
-
     @Inject(MyLogger2) private logger: MyLogger2,
   ) {}
 

@@ -584,3 +584,47 @@ Nest 的文件上传也是基于 multer 实现的，它对 multer api 封装了�
 你可以把这个自定义 Logger 封装到全局模块，或者动态模块里。
 
 当然，一般情况下，直接使用 Logger 就可以了。
+
+
+
+#### Docker
+
+点击nginx run 按钮
+
+```shell
+docker run --name nginx-test2 -p 80:80 -v /tmp/aaa:/usr/share/nginx/html -e KEY1=VALUE1 -d nginx:latest 
+
+```
+
+-p 是端口映射
+
+-v 是指定数据卷挂载目录
+
+-e 是指定环境变量
+
+-d 是后台运行
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230719234520463.png)
+
+此时会返回一个容器的hash, 就是 容器中镜像的ID
+
+docker 的命令有很多 , 千万不要死记 , 去官网查询即可.
+
+
+
+Docker 可以把环境封装成镜像，镜像跑起来是一个独立的容器。通过这种方式可以快速部署多个相同的实例。
+
+docker 提供了一个 desktop 工具，可以可视化的操作 docker，包括容器、镜像、volume 等
+
+我们 pull 了一个 nginx 镜像下来，指定端口映射、挂载的数据卷，并把它跑起来了。
+
+这就是 docker 的基本用法。
+
+当然，这些可视化的操作都有对应的命令，当服务器上没有桌面的时候，就需要用命令行操作了。
+
+不得不说，用 desktop 来学 docker 真是太简单了。
+
+
+
+
+

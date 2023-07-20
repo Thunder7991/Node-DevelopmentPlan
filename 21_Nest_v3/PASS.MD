@@ -596,13 +596,17 @@ docker run --name nginx-test2 -p 80:80 -v /tmp/aaa:/usr/share/nginx/html -e KEY1
 
 ```
 
--p 是端口映射
+`-p` 是端口映射
 
--v 是指定数据卷挂载目录
+`-v` 是指定数据卷挂载目录
 
--e 是指定环境变量
+`-e` 是指定环境变量
 
--d 是后台运行
+`-d` 是后台运行
+
+`-f ` 指定下 dockefile 的文件名 
+
+`-t` 参数为镜像设置了一个标签 `my-app:latest`。这意味着构建的镜像将被命名为 `my-app`，标签为 `latest`，即表示最新版本的镜像。如果不指定标签，默认为 `latest`
 
 ![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230719234520463.png)
 
@@ -626,5 +630,21 @@ docker 提供了一个 desktop 工具，可以可视化的操作 docker，包括
 
 
 
+##### Dockerfile
+
+- FROM：基于一个基础镜像来修改
+- WORKDIR：指定当前工作目录
+- COPY：把容器外的内容复制到容器内
+- EXPOSE：声明当前容器要访问的网络端口，比如这里起服务会用到 8080
+- RUN：在容器内执行命令
+- CMD：容器启动的时候执行的命令
 
 
+
+docker 镜像是通过 dockerfile 构建出来的。
+
+我们写了第一个 dockerfile，通过 FROM、WORKDIR、COPY、RUN、EXPOSE、CMD 等指令声明了一个 http-server 提供静态服务的镜像。
+
+docker run 这个镜像就可以生成容器，指定映射的端口、挂载的数据卷、环境变量等。
+
+VOLUME 指令看起来没啥用，但能保证你容器内某个目录下的数据一定会被持久化，能保证没挂载数据卷的时候，数据不丢失。

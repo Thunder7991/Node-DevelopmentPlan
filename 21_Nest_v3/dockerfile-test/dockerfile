@@ -1,0 +1,31 @@
+# build stage 通过 FROM 继承镜像的时候，给当前镜像指定一个名字，比如 build-stage。
+FROM node:18 as build-stage
+
+WORKDIR /app
+
+COPY   package.json .  
+
+RUN npm config set registry https://registry.npmmirror.com/
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+# production stage
+FROM node:18 as production-stage
+
+# 那个镜像内复制 /app/dist 的文件到当前镜像的 /app 下。
+COPY --from=build-stage /app/dist /app 
+# 还要把 package.json 也复制过来，然后切到 /app 目录执行 npm install --production 只安装 dependencies 依赖
+COPY --from=build-stage /app/package.json /app/package.json
+
+WORKDIR /app
+
+RUN npm install --production
+
+
+EXPOSE 3000
+
+CMD [ "node", "/app/main.js" ]

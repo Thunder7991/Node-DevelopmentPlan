@@ -648,3 +648,17 @@ docker 镜像是通过 dockerfile 构建出来的。
 docker run 这个镜像就可以生成容器，指定映射的端口、挂载的数据卷、环境变量等。
 
 VOLUME 指令看起来没啥用，但能保证你容器内某个目录下的数据一定会被持久化，能保证没挂载数据卷的时候，数据不丢失。
+
+
+
+#### Nest项目如何编写Dockerfile
+
+docker build 的时候会把构建上下文的所有文件打包发送给 docker daemon 来构建镜像。
+
+可以通过 .dockerignore 指定哪些文件不发送，这样能加快构建时间，减小镜像体积。
+
+此外，多阶段构建也能减小镜像体积，也就是 build 一个镜像、production 一个镜像，最终保留下 production 的镜像。
+
+而且我们一般使用 alpine 的基础镜像，类似 node:18.10-aline3.14，这样构建出来镜像体积会小很多。
+
+这就是用 Nest 项目构建 Docker 镜像的方式。

@@ -662,3 +662,116 @@ docker build 的时候会把构建上下文的所有文件打包发送给 docker
 而且我们一般使用 alpine 的基础镜像，类似 node:18.10-aline3.14，这样构建出来镜像体积会小很多。
 
 这就是用 Nest 项目构建 Docker 镜像的方式。
+
+
+
+案例:
+
+```shell
+docker run -p 3000:3000 -v /aaa:/bbb/ccc --name xxx-container xxx-image
+```
+
+通过 xxx-image 镜像跑起来一个叫做 xxx-container 的容器。
+
+-p 指定端口映射，映射宿主机的 3000 到容器的 3000 端口。
+
+-v 指定数据卷挂载，挂载宿主机的 /aaa 到容器的 /bbb/ccc 目录。
+
+这个镜像是通过 Dockerfile 经过 build 产生的。
+
+![流程如下](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230720234716645.png)
+
+基本 CI/CD 也是这样的流程：
+
+CI 的时候 git clone 项目，根据 dockerfile 构建出镜像，打上 tag，push 到仓库。
+
+CD 的时候把打 tag 的镜像下下来，docker run 跑起来。
+
+这个 Dockerfile 是在项目里维护的，虽然 CI/CD 流程不用自己搞，但是 Dockefile 还是要开发者自己写的。
+
+
+
+#### 使用多阶段构建
+
+
+
+详见dockerfile-test
+
+
+
+#### 使用 ARG 增加构建灵活性
+
+构建
+
+```shell
+docker build --build-arg aaa=3 --build-arg bbb=4 -t arg-test -f ARG.dockerfile .
+```
+
+运行
+
+```shell
+docker run  --name fourth-container arg-test
+```
+
+
+
+#### CMD 结合 ENTRYPOINT
+
+
+
+```dockerfile
+FROM node:18-alpine3.14
+
+CMD ["echo", "thunder", "到此一游"]
+# thunder 到此一游
+```
+
+
+
+用 CMD 的时候，启动命令是可以重写的：
+
+```shell
+docker run cmd-test echo "chen"
+```
+
+会替换成 chen 
+
+
+
+可以替换成任何命令。
+
+而用 ENTRYPOINT 就不会：
+
+```dockerfile
+FROM node:18-alpine3.14
+
+ENTRYPOINT ["echo", "thunderchen", "到此一游"]
+```
+
+```shell
+docker run cmd-test echo "chen"
+```
+
+打印:  thunderchen 到此一游   chen
+
+ENTRYPOINT 和 CMD 是可以结合使用的。
+
+```shell
+FROM node:18-alpine3.14
+
+ENTRYPOINT ["echo", "thunder"]
+
+CMD ["chen"]
+```
+
+```shell
+docker run cmd-test
+docker run cmd-test 66666
+```
+
+thunder chen
+
+thunder 66666
+
+#### COPY vs ADD
+

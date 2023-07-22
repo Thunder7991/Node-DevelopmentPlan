@@ -984,3 +984,278 @@ Docker 基础配置
 /var/lib/mysql
 
 ![mysql](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722194010360.png)
+
+
+
+#### MYsql 小试牛刀
+
+
+
+查询:
+
+```sql
+SELECT name, score FROM student;
+
+#之前 select * 是查询所有列的意思,可以通过 as 修改返回的列名：
+SELECT name as "名字",score as "分数" FROM student;
+
+#查询自然是可以带条件的，通过 where：
+SELECT name as "名字" , class as "班级" from student where age>=19;
+
+#条件可以是and连接的多个:
+SELECT name as "名字",class as "班级" from student WHERE gender="男" and score >= 90;
+
+#以用 LIKE 做模糊查询, 比如查询名字以“王”开头的学生：
+SELECT * from student WHERE name LIKE "王%";
+
+#通过 in 来指定一个集合：
+SELECT * from student WHERE class in ("一班","二班");
+
+#也可以 not in：
+SELECT * from student WHERE class not in ("一班","二班");
+
+#通过 between and 来指定一个区间：
+SELECT * FROM student WHERE age BETWEEN 18 AND 20;
+
+#返回的数量太多，可以分页返回，这个是通过 limit 实现的,比如从 0 开始的 5 个：
+SELECT * FROM student LIMIT 0,5; 
+#或者
+SELECT * FROM student LIMIT 5;
+
+#通过 order by 来指定排序的列：
+#ASC 升序 , DESC 降序.
+SELECT name,score,age, FROM  student ORDER BY score ASC,age DESC;
+
+#分组统计, 比如统计每个班级的平均成绩：
+#根据班级来分组是 GROUP BY class,求平均成绩使用 sql 内置的函数 AVG(),之后根据平均成绩来降序排列。
+SELECT calss as "班级" ,AVG(score) AS "平均成绩" FROM student GROUP BY "平均成绩" DESC;
+
+#还有count
+# count(*) 代表当前行
+SELECT class,count(*) as count FROM student GROUP BY class;
+
+#分组统计之后还可以做进一步的过滤，但这时候不是用 where 了，而是用 having：
+SELECT class,AVG(score) as avg_score FROM student GROUP BY class HAVING avg_score > 90;
+
+#用 distinct 去重：
+SELECT DISTINCT class FROM student;
+```
+
+![as](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723005749186.png)
+
+![limit 0,5](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723010749089.png)
+
+
+
+![count](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723011658441.png)
+
+#### 聚合函数
+
+用于对数据的统计，比如 AVG、COUNT、SUM、MIN、MAX。
+
+```sql
+SELECT avg(score) as "平均成绩" , count(*) as "人数",sum(score) as "总成绩",min(score) as "最低分", max(score) as "最高分" from student;
+```
+
+![聚合函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723012453078.png)
+
+#### 字符串函数
+
+对字符串的处理，比如 CONCAT、SUBSTR、LENGTH、UPPER、LOWER。
+
+
+
+```sql
+SELECT CONCAT('xx',name,'yy'),SUBSTR(name,2,3),LENGTH(name),UPPER('aa'),LOWER('TT') FROM student;
+```
+
+![字符串函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723012725632.png)
+
+
+
+#### 数值函数
+
+
+
+用于对数值的处理，比如 ROUND、CEIL、FLOOR、ABS、MOD。
+
+
+
+ROUND 四舍五入、CEIL 向上取整、FLOOR 向下取整、ABS 绝对值、MOD 取模。
+
+
+
+```sql
+SELECT ROUND(1.23455,2),CETL(1.234345),FLOOR(2.3243434),ABS(-1.5454545),MOD(5,2);
+```
+
+
+
+![数值函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723013830282.png)
+
+
+
+#### 日期函数  
+
+
+
+对日期、时间进行处理，比如 DATE、TIME、YEAR、MONTH、DAY
+
+```sql
+SELECT YEAR('2023-06-01 22:06:03'), MONTH('2023-06-01 22:06:03'),DAY('2023-06-01 22:06:03'),DATE('2023-06-01 22:06:03'), TIME('2023-06-01 22:06:03');
+```
+
+![日期函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723013920578.png)
+
+
+
+#### 条件函数
+
+
+
+根据条件是否成立返回不同的值，比如 IF、CASE
+
+if 函数适合单个条件，case 适合多个条件。
+
+if 和 case 函数和 js 里的 if、swtch 语句很像，很容易理解。
+
+```sql
+SELECT name,IF(score>=60,"及格","不及格") FROM student;
+
+
+SELECT name, score, CASE WHEN score >=90 THEN '优秀' WHEN score >=60 THEN '良好'ELSE '差' END AS '档次' FROM student;
+```
+
+![条件函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723014036094.png)
+
+
+
+#### **系统函数**
+
+用于获取系统信息，比如 VERSION、DATABASE、USER。
+
+```sql
+select VERSION(), DATABASE(), USER()
+```
+
+![system function](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723014258298.png)
+
+
+
+#### 其他函数 
+
+
+
+NULLIF、COALESCE、GREATEST、LEAST。
+
+
+
+##### NULLIF
+
+如果相等返回 null，不相等返回第一个值。
+
+
+
+```sql
+SELECT NULLIF(1,1),NULLIF(1,2);
+```
+
+![NULLIF](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723014445488.png)
+
+
+
+##### COALESCE
+
+返回第一个非 null 的值：
+
+```sql
+SELECT COALESCE(null,1),COALESCE(null,null,2);
+```
+
+![COALESCE](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723014616799.png)
+
+
+
+##### GREATEST、LEAST
+
+返回几个值中最大最小的。
+
+
+
+```sql
+SELECT GREATEST(1,2,3),LEAST(1,2,3,4,5);
+```
+
+![最大,最小](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723014736182.png)
+
+
+
+##### **类型转换函数**
+
+
+
+转换类型为另一种，比如 CAST、CONVERT、DATE_FORMAT、STR_TO_DATE。
+
+
+
+```sql
+SELECT GREATEST(1,CONVERT('123',signed),3);
+
+SELECT GREATEST(1,CAST('123' AS signed),3);
+
+```
+
+![CAST_CONVERT](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723015236971.png)
+
+这里可以转换的类型有这些：
+
+- signed：整型；
+- unsigned：无符号整型
+- decimal：浮点型；
+- char：字符类型；
+- date：日期类型；
+- time：时间类型；
+- datetime：日期时间类型；
+- binary：二进制类型
+
+
+
+ STR_TO_DATE 和 DATE_FORMAT 
+
+
+
+```sql
+SELECT STR_TO_DATE('2023-06-01', '%Y-%m-%d');
+```
+
+![STR_TO_DATE](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723015428205.png)
+
+
+
+##### 总结
+
+我们连接 mysql 数据库，建了张 student 表，插入了一些数据，然后用这些数据来练习了各种查询语法和函数。
+
+- **where**：查询条件，比如 where id=1
+- **as**：别名，比如 select xxx as 'yyy'
+- **and**: 连接多个条件
+- **in/not in**：集合查找，比如 where a in (1,2)
+- **between and**：区间查找，比如 where a between 1 and 10
+- **limit**：分页，比如 limit 0,5
+- **order by**：排序，可以指定先根据什么升序、如果相等再根据什么降序，比如 order by a desc,b asc
+- **group by**：分组，比如 group by aaa
+- **having**：分组之后再过滤，比如 group by aaa having xxx > 5
+- **distinct**：去重
+
+sql 还可以用很多内置函数：
+
+- 聚合函数：avg、count、sum、min、max
+- 字符串函数：concat、substr、length、upper、lower
+- 数值函数：round、ceil、floor、abs、mod
+- 日期函数：year、month、day、date、time
+- 条件函数：if、case
+- 系统函数：version、datebase、user
+- 类型转换函数：convert、cast、date_format、str_to_date
+- 其他函数：nullif、coalesce、greatest、least
+
+灵活掌握这些语法，就能写出各种复杂的查询语句。

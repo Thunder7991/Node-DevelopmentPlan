@@ -826,3 +826,141 @@ Namespace 做资源隔离，Control Group 做容器的资源限制，UnionFS 做
 挂载一个 volume 数据卷到 Docker 容器，就可以实现数据的持久化。
 
 这就是 Docker 的实现原理。
+
+
+
+### PM2
+
+#### 安装:
+
+```shell
+npm install -g pm2
+```
+
+#### Run:
+
+```shell
+pm2 start ./dist/main.js
+```
+
+![start](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722155727013.png)
+
+#### 日志:
+
+```shell
+pm2 logs
+//或者 查询单个进程
+pm2 logs 进程名
+pm2 logs 进程id
+
+```
+
+![logs](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722155800982.png)
+
+#### 超过N M内存自动重启
+
+```shell
+pm2 start xxx --max-memory-restart 200M
+```
+
+#### 从 2s 开始每 3s 重启一次：
+
+```shell
+pm2 start xxx --cron-restart "2/3 * * * *"
+```
+
+#### 当文件内容改变自动重启：
+
+```shell
+pm2 start xxx --watch
+```
+
+#### 不自动重启：
+
+```shell
+pm2 start xxx  --no-autorestart
+```
+
+#### 删除进程:
+
+```shell
+pm2 delete 0
+```
+
+![delete](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722162531301.png)
+
+
+
+#### 查看 main 进程的前 100 行日志：
+
+```shell
+pm2 logs main --lines 100 
+```
+
+
+
+#### 日志清空
+
+```shell
+pm2 flush
+```
+
+#### pm2 stop pm2 restart ... 
+
+
+
+#### pm2 负载均衡
+
+```shell
+pm2 start app.js -i max
+pm2 start app.js -i 0
+```
+
+ -i num 就是启动 num 个进程做负载均衡的意思。
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722164805680.png)
+
+
+
+ 调整数量
+
+```shell
+pm2 scale main 3
+pm2 scale main +3
+```
+
+
+
+#### 性能监控
+
+```shell
+pm2 monit
+```
+
+![monit](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722164950181.png)
+
+
+
+#### pm2 配置文件  Ecosystem
+
+创建文件
+
+```shell
+ pm2 ecosystem
+```
+
+
+
+#### 总结
+
+服务器上的 node 应用需要用 pm2 的日志管理、进程管理、负载均衡、性能监控等功能。
+
+分别对应 pm2 logs、pm2 start/restart/stop/delete、pm2 start -i、pm2 monit 等命令。
+
+多个应用或者想把启动选项保存下来的时候，可以通过 ecosystem 配置文件，批量启动一系列应用。
+
+我们会把 docker 和 pm2 结合起来，在进程崩溃的时候让 pm2 来自动重启。
+
+只要写 dockerfile 的时候多安装一个 pm2 的依赖，然后把 node 换成 p2-runtime 就好了。
+
+不管是出于稳定性、性能还是可观测性等目的，pm2 都是必不可少的。

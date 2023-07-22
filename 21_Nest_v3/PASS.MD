@@ -964,3 +964,23 @@ pm2 monit
 只要写 dockerfile 的时候多安装一个 pm2 的依赖，然后把 node 换成 p2-runtime 就好了。
 
 不管是出于稳定性、性能还是可观测性等目的，pm2 都是必不可少的。
+
+
+
+#### MySQL in Docker
+
+
+
+ [MySQL GUI](https://dev.mysql.com/downloads/workbench/)
+
+
+
+Docker 基础配置
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722193916321.png)
+
+数据所在docker位置
+
+/var/lib/mysql
+
+![mysql](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230722194010360.png)

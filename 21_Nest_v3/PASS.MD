@@ -504,7 +504,7 @@ middleware 更适合处理通用的逻辑。
 
 
 
-#### rxJS
+### rxJS
 
 rxjs 是一个处理异步逻辑的库，它的特点就是 operator 多，你可以通过组合 operator 来完成逻辑，不需要自己写。
 
@@ -521,7 +521,7 @@ nest 的 interceptor 就用了 rxjs 来处理响应，但常用的 operator 也�
 
 
 
-#### Pipe
+### Pipe
 
 内置的Pipe有这些：
 
@@ -537,7 +537,7 @@ nest 的 interceptor 就用了 rxjs 来处理响应，但常用的 operator 也�
 
 
 
-#### class-validator
+### class-validator
 
 它的实现原理是基于 class-tranformer 把参数对象转换为 dto class 的对象，然后通过 class-validator 基于装饰器对这个对象做验证。
 
@@ -555,7 +555,7 @@ class-validator 支持很多种验证规则，比如邮箱、域名、长度、�
 
 
 
-#### Nest 上传
+### Nest 上传
 
 Nest 的文件上传也是基于 multer 实现的，它对 multer api 封装了一层，提供了 FileInterceptor、FilesInterceptor、FileFieldsInterceptor、AnyFilesInterceptor 的拦截器，分别用到了 multer 包的 single、array、fields、any 方法。
 
@@ -573,7 +573,7 @@ Nest 的文件上传也是基于 multer 实现的，它对 multer api 封装了�
 
 
 
-#### 日志
+### 日志
 
 日志打印可以用 Nest 的 Logger，它支持在创建应用的时候指定 logger 是否开启，打印的日志级别，还可以自定义 logger。
 
@@ -587,7 +587,7 @@ Nest 的文件上传也是基于 multer 实现的，它对 multer api 封装了�
 
 
 
-#### Docker
+### Docker
 
 点击nginx run 按钮
 
@@ -630,7 +630,7 @@ docker 提供了一个 desktop 工具，可以可视化的操作 docker，包括
 
 
 
-##### Dockerfile
+### Dockerfile
 
 - FROM：基于一个基础镜像来修改
 - WORKDIR：指定当前工作目录
@@ -651,7 +651,7 @@ VOLUME 指令看起来没啥用，但能保证你容器内某个目录下的数�
 
 
 
-#### Nest项目如何编写Dockerfile
+### Nest项目如何编写Dockerfile
 
 docker build 的时候会把构建上下文的所有文件打包发送给 docker daemon 来构建镜像。
 
@@ -691,7 +691,7 @@ CD 的时候把打 tag 的镜像下下来，docker run 跑起来。
 
 
 
-#### 使用多阶段构建
+### 使用多阶段构建
 
 
 
@@ -699,7 +699,7 @@ CD 的时候把打 tag 的镜像下下来，docker run 跑起来。
 
 
 
-#### 使用 ARG 增加构建灵活性
+### 使用 ARG 增加构建灵活性
 
 构建
 
@@ -715,7 +715,7 @@ docker run  --name fourth-container arg-test
 
 
 
-#### CMD 结合 ENTRYPOINT
+### CMD 结合 ENTRYPOINT
 
 
 
@@ -773,7 +773,7 @@ thunder chen
 
 thunder 66666
 
-#### COPY vs ADD
+### COPY vs ADD
 
 ```dockerfile
 FROM node:18-alpine3.14
@@ -806,3 +806,23 @@ Dockerfile 有挺多技巧：
 - ADD 和 COPY 都可以复制文件到容器内，但是 ADD 处理 tar.gz 的时候，还会做一下解压。
 
 灵活使用这些技巧，可以让你的 Dockerfile 更加灵活、性能更好。
+
+
+
+
+
+### Docker实现原理
+
+
+
+Docker 的实现原理依赖 linux 的 Namespace、Control Group、UnionFS 这三种机制。
+
+Namespace 做资源隔离，Control Group 做容器的资源限制，UnionFS 做文件系统的镜像存储、镜像合并。
+
+我们通过 dockerfile 描述镜像构建的过程，每一条指令都是一个镜像层。
+
+镜像通过 docker run 就可以跑起来，对外提供服务，这时会添加一个可写层（容器层）。
+
+挂载一个 volume 数据卷到 Docker 容器，就可以实现数据的持久化。
+
+这就是 Docker 的实现原理。

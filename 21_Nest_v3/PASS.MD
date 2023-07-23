@@ -1259,3 +1259,85 @@ sql 还可以用很多内置函数：
 - 其他函数：nullif、coalesce、greatest、least
 
 灵活掌握这些语法，就能写出各种复杂的查询语句。
+
+
+
+#### 关联查询
+
+```sql
+SELECT * FROM user JOIN id_card ON user.id = id_card.user_id;
+#全称是INNER JOIN ON
+#隐藏user_id
+SELECT user.id,name,id_card.id as card_id,card_name FROM user JOIN id_card ON user.id = id_card.user_id;
+
+#LEFT JOIN 是额外返回左表中没有关联上的数据。
+#RIGHT JOIN 是额外返回右表中没有关联上的数据。
+
+SELECT user.id,name,id_card.id as card_id,card_name FROM user RIGHT JOIN id_card ON user.id = id_card.user_id;
+
+SELECT user.id , name,id_card.id as card_id , card_name FROM user LEFT JOIN  id_card ON user.id = id_card.user_id;
+
+```
+
+![JOIN ON](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723115338462.png)
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723115420330.png)
+
+
+
+![Right Join](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723125938135.png)
+
+![Left join](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723130050063.png)
+
+
+
+#### 关联表更新和删除
+
+
+
+- CASCADE： 主表主键更新，从表关联记录的外键跟着更新，主表记录删除，从表关联记录删除
+- SET NULL：主表主键更新或者主表记录删除，从表关联记录的外键设置为 null
+- RESTRICT：只有没有从表的关联记录时，才允许删除主表记录或者更新主表记录的主键 id
+- NO ACTION： 同 RESTRICT，只是 sql 标准里分了 4 种，但 mysql 里 NO ACTION 等同于 RESTRICT。
+
+
+
+```sql
+ALTER TABLE `hello-mysql`.`id_card`
+DROP FOREIGN KEY `user_id`;
+ALTER TABLE `hello-mysql`.`id_card`
+ADD CONSTRAINT `user_id`
+ FOREIGN KEY(`user_id`)
+ REFERENCES `hello-mysql`.`user`(`id`)
+ ON DELETE RESTRICT
+ ON UPDATE RESTRICT
+ 
+ #删除主表中的 id = 2的数据 , 会报错, 因为从表中有关联主表的数据
+ DELETE FROM `hello-mysql`.`user` WHERE (`id`='2');
+ #将从表中的关联id=2 设置为null
+ UPDATE `hello-mysql`.`id_card` SET user_id=null WHERE user_id=2;
+ 
+ #再次删除 提示成功~
+```
+
+
+
+ **RESTIRCT 和 NO ACTION 的处理逻辑：只要从表有关联记录，就不能更新 id 或者删除记录。**
+
+
+
+ **CASCADE 的处理逻辑：主表删除，从表关联记录也级联删除，主表 id 更新，从表关联记录也跟着更新。**
+
+
+
+**set null 的处理逻辑：主表记录删除或者修改 id，从表关联记录外键置为 null。**
+
+
+
+查询的时候需要使用 join on，默认是 inner join 也就是只返回有关联的记录，也可以用 left join、right join 来额外返回没有关联记录的左表或右表的记录。
+
+from 后的是左表，join 后的是右表。
+
+此外，外键还可以设置级联方式，也就是主表修改 id 或者删除的时候，从表怎么做。
+
+有 3 种级联方式：CASCADE（关联删除或更新），SET NULL（关联外键设置为 null），RESTRICT 或者 NO ACTION（没有从表的关联记录才可以删除或更新）

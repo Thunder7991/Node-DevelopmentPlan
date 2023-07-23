@@ -1381,3 +1381,111 @@ DELETE FROM article WHERE id = 1;
 此外，多对多的 join 需要连接 3 个表来查询。
 
 一对多、多对多是非常常见的表之间的关系，要好好掌握它们的外键设置、关联查询、级联方式。
+
+
+
+#### 子查询
+
+查询学生表中成绩最高的学生的姓名和班级名称。
+
+```sql
+SELECT name,class FROM student WHERE score = (SELECT MAX(score) FROM student);
+```
+
+![姓名和班级名称](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723201212158.png)
+
+
+
+查询成绩高于全校平均成绩的学生记录：
+
+```sql
+SELECT * FROM student2 WHERE score > (SELECT AVG(score) FROM student2);
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723201443883.png)
+
+
+
+子查询还有个特有的语法 EXISTS、NOT EXISTS。
+
+
+
+对每个 department，在子查询里查询它所有的 employee。
+
+如果存在员工，那么条件成立，就返回这个部门的 name。
+
+这就是 EXISTS 的作用：子查询返回结果，条件成立，反之不成立。
+
+```sql
+SELECT name FROM department
+    WHERE EXISTS (
+        SELECT * FROM employee WHERE department.id = employee.department_id
+    );
+```
+
+![EXISTS](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723202225312.png)
+
+
+
+NOT EXISTS 
+
+
+
+```sql
+SELECT name FROM department
+    WHERE NOT EXISTS (
+            SELECT * FROM employee WHERE department.id = employee.department_id
+    );
+```
+
+![ NOT EXISTS](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723202443915.png)
+
+
+
+查询加个最高的产品信息:
+
+```sql
+SELECT name,price FROM product WHERE price = (SELECT MAX(price) FROM product);
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723204424685.png)
+
+把每个产品分类的分类名、平均价格查出来放入另一个 avg_price_by_category 表。
+
+
+
+```sql
+INSERT INTO avg_price_by_category (category, avg_price)   SELECT category, AVG(price) FROM product GROUP BY category;
+```
+
+![insert 子查询](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723210022724.png)
+
+
+
+update子查询
+
+```sql
+#技术部所有人的 name 前加上 “技术-"
+UPDATE employee SET name = CONCAT('技术-', name) 
+    WHERE department_id = (
+        SELECT id FROM department WHERE name = '技术部'
+    );
+```
+
+delete 子查询
+
+```sql
+#删除技术部所有的员工
+DELETE FROM employee WHERE department_id = (
+    SELECT id FROM department WHERE name = '技术部'
+);
+
+```
+
+sql 和 sql 可以组合来完成更复杂的功能，这种语法叫做子查询。
+
+它还有个特有的关键字 EXISTS（和 NOT EXISTS），当子查询有返回结果的时候成立，没有返回结果的时候不成立。
+
+子查询不止 select 可用，在 update、insert、delete 里也可以用。
+
+灵活运用子查询，能写出功能更强大的 sql。

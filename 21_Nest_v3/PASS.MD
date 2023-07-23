@@ -1489,3 +1489,178 @@ sql 和 sql 可以组合来完成更复杂的功能，这种语法叫做子查�
 子查询不止 select 可用，在 update、insert、delete 里也可以用。
 
 灵活运用子查询，能写出功能更强大的 sql。
+
+
+
+### SQL 进阶
+
+#### 需求 1: 查询每个客户的订单总金额
+
+客户的订单存在订单表里，可能有多个，这里需要 JOIN ON 关联两个表，然后用 GROUP BY 根据客户 id 分组，再通过 SUM 函数计算价格总和。
+
+```sql
+SELECT customers.name, SUM(orders.total_amount) AS total_amount 
+FROM customers
+INNER JOIN orders ON customers.id = orders.customer_id
+GROUP BY customers.id
+ORDER BY total_amount DESC #降序
+LIMIT 0,3; #从弟0个开始取3个
+```
+
+![需求1](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723215434175.png)
+
+
+
+![降序,取前三条](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723215652649.png)
+
+
+
+#### 需求 2: 查询每个客户的订单总金额，并计算其占比
+
+每个客户的总金额的需求上面实现了，这里需要算占比，就需要通过一个子查询来计算全部订单的总金额，然后相除：
+
+```sql
+SELECT customers.name,SUM(orders.total_amount) AS total_amount,
+SUM(orders.total_amount) / (SELECT SUM(total_amount) FROM orders) AS percentage 
+FROM customers
+INNER JOIN orders ON customers.id = orders.customer_id
+GROUP BY customers.id;
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723223034862.png)
+
+
+
+#### 需求 3：查询每个客户的订单总金额，并列出每个订单的商品清单
+
+
+
+这里在总金额的基础上，多了订单项的查询，需要多关联一个表：
+
+```sql
+SELECT customers.name,orders.order_date,orders.total_amount,order_items.product_name,order_items.quantity, order_items.price
+FROM customers
+JOIN orders ON customers.id = orders.customer_id
+JOIN order_items ON orders.id = order_items.order_id
+ORDER BY customers.name, orders.order_date;
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723223429052.png)
+
+#### 需求 4：查询每个客户的订单总金额，并列出每个订单的商品清单，同时只显示客户名字姓“张”的客户的记录：
+
+总金额和商品清单的需求前面实现了，这里只需要加一个 WHERE 来过滤客户名就行：
+
+```sql
+SELECT customers.name, orders.order_date, orders.total_amount, 
+	order_items.product_name, order_items.quantity, order_items.price
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id
+    INNER JOIN order_items ON orders.id = order_items.order_id
+    WHERE customers.name LIKE '张%'
+    ORDER BY customers.name, orders.order_date;
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723223531961.png)
+
+
+
+#### 需求 5:查询每个客户的订单总金额，并列出每个订单的商品清单，同时只显示订单日期在2022年1月1日到2022年1月3日之间的记录
+
+这里比上面的需求只是多了日期的过滤，范围是一个区间，用 BETWEEN AND：
+
+```sql
+SELECT customers.name, orders.order_date,
+	orders.total_amount, order_items.product_name,
+    order_items.quantity, order_items.price
+    FROM customers
+    INNER JOIN orders ON customers.id = orders.customer_id
+    INNER JOIN order_items ON orders.id = order_items.order_id
+    WHERE orders.order_date BETWEEN '2022-01-01' AND '2022-01-03'
+    ORDER BY customers.name, orders.order_date;
+```
+
+因为这里的 order_date 是 date 类型，所以指定范围也只是用 2022-01-01 这种格式的。如果是 datetime，那就要用 2022-01-01 10:10:00 这种格式了。
+
+
+
+#### 需求 6：查询每个客户的订单总金额，并计算商品数量，只包含商品名称包含“鞋”的商品，商品名用-连接，显示前 3 条记录：
+
+查询订单总金额和商品数量都需要用 group by 根据 customer.id 分组，过滤出只包含鞋的商品。
+
+
+
+把分组的多条商品名连接起来需要用 GROUP_CONCAT 函数。
+
+
+
+然后 LIMIT 3
+
+
+
+```sql
+SELECT 
+        c.name AS customer_name,
+        SUM(o.total_amount) AS total_amount,
+        COUNT(oi.id) AS total_quantity,
+        GROUP_CONCAT(oi.product_name SEPARATOR '-') AS product_names
+    FROM customers c
+    JOIN orders o ON c.id = o.customer_id
+    JOIN order_items oi ON o.id = oi.order_id
+    WHERE oi.product_name LIKE '%鞋%'
+    GROUP BY c.name
+    ORDER BY total_amount DESC
+    LIMIT 3;
+```
+
+GROUP_CONCAT 函数是用于 group by 分组后，把多个值连接成一个字符串的。
+
+LIMIT 3 就相当于 LIMIT 0,3 也就是从 0 开始 3 条记录
+
+#### 需求 7: 查询存在订单的客户
+
+使用子查询 + EXISTS 来实现：
+
+```sql
+ SELECT * FROM customers c WHERE EXISTS (
+		SELECT 1 FROM orders o WHERE o.customer_id = c.id
+    );
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723224425951.png)
+
+也可以用 NO EXISTS 来查询没有下单过的客户：
+
+
+
+```sql
+SELECT * FROM customers c
+    WHERE NOT EXISTS (
+            SELECT 1 FROM orders o WHERE o.customer_id = c.id
+    );
+```
+
+
+
+#### 需求 8: 将王磊的订单总金额打九折
+
+
+
+更新它们为 90%：
+
+
+
+```sql
+  UPDATE orders o SET o.total_amount = o.total_amount * 0.9
+    WHERE o.customer_id IN (
+		SELECT id FROM customers WHERE name = "王磊"
+    );
+```
+
+
+
+这里订单不止一条，所以用 IN 来指定一个集合。
+
+
+
+customers 和 orders、orders 和 order_items 都是一对多的关系。

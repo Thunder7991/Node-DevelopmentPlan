@@ -1341,3 +1341,43 @@ from 后的是左表，join 后的是右表。
 此外，外键还可以设置级联方式，也就是主表修改 id 或者删除的时候，从表怎么做。
 
 有 3 种级联方式：CASCADE（关联删除或更新），SET NULL（关联外键设置为 null），RESTRICT 或者 NO ACTION（没有从表的关联记录才可以删除或更新）
+
+
+
+3个表关联查询 ,  id 为 1 的 article 的所有标签：
+
+```sql
+SELECT * FROM article as a JOIN article_tag as at ON a.id=at.article_id JOIN tag as t ON t.id = at.tag_id WHERE a.id = 1;
+
+#指定返回的列：
+SELECT t.name AS 标签名, a.title AS 文章标题
+    FROM article a 
+    JOIN article_tag at ON a.id = at.article_id
+    JOIN tag t ON t.id = at.tag_id
+    WHERE a.id = 1;
+
+#删除文章1 内容
+DELETE FROM article WHERE id = 1;
+
+#再次执行上述的查询操作, 联级也会被删除~
+```
+
+![join on](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723145947320.png)
+
+![next](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723150001994.png)
+
+
+
+
+
+我们创建了部门、员工表，并在员工表添加了引用部门 id 的外键 department_id 来保存这种一堆多关系。
+
+并且设置了级联方式为 set null。
+
+创建了文章表、标签表、文章标签表来保存多堆多关系，多对多不需要在双方保存彼此的外键，只要在中间表里维护这种关系即可。
+
+中间表的外键级联方式一定为 CASCADE，因为数据没了关系就没必要还留着了。
+
+此外，多对多的 join 需要连接 3 个表来查询。
+
+一对多、多对多是非常常见的表之间的关系，要好好掌握它们的外键设置、关联查询、级联方式。

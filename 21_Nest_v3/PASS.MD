@@ -1664,3 +1664,146 @@ SELECT * FROM customers c
 
 
 customers 和 orders、orders 和 order_items 都是一对多的关系。
+
+
+
+### 事务
+
+开启事务：
+
+
+
+```sql
+START TRANSACTION;
+```
+
+
+
+执行两条 sql 语句：
+
+```sql
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+```
+
+发现改错了，想再改回去
+
+
+
+```sql
+ROLLBACK;
+```
+
+
+
+数据恢复~~~
+
+
+
+确实想提交，那可以执行 COMMIT：
+
+```sql
+START TRANSACTION;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+COMMIT;
+```
+
+据就真正被修改，不能回滚了。
+
+
+
+果我不是想回滚所有的 sql 语句，只是回滚一部分 , 手动告诉 mysql 一些保存的点：
+
+
+
+```sql
+START TRANSACTION;
+
+SAVEPOINT aaa;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+
+SAVEPOINT bbb;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+SAVEPOINT ccc;
+
+#回滚到 bbb 的位置：在此查询 只有 order_items修改了
+
+ROLLBACK TO SAVEPOINT bbb;
+#回滚到 ccc： 都修改了
+ROLLBACK TO SAVEPOINT ccc;
+
+
+
+```
+
+**START TRANSACTION 开启事务后所有的 sql 语句都可以 ROLLBACK，除非执行了 COMMIT 完成这段事务。**
+
+**还可以设置几个 SAVEPOINT，这样可以 ROLLBACK TO 任何一个 SAVEPOINT 的位置。**
+
+
+
+果事务还没有 COMMIT，但是它修改了一些表，这时候我们能查到它修改后的数据么？
+
+这就涉及到事务的隔离级别的概念了。
+
+
+
+MYSQL 有 4 种事务隔离级别：
+
+- **READ UNCOMMITTED**：可以读到别的事务尚未提交的数据。
+
+  这个事务内第一次读的数据是 aaa，下次读可能就是 bbb 了，这个问题叫做**不可重复读**。
+
+  而且，万一你读到的数据人家又回滚了，那你读到的就是临时数据，这个问题叫做**脏读**。
+
+- **READ COMMITTED**：只读取别的事务已提交的数据。
+
+​	   但是还是有可能你这个事务内第一次读的数据是 aaa，下次读可能是 bbb ，也就是不可重复读   	   的	问题依然存在。
+
+​	   不只是数据不一样，可能你两次读取到的记录行数也不一样，这叫做**幻读**。
+
+- **REPEATABLE READ**：在同一事务内，多次读取数据将保证结果相同。
+
+​		这个级别保证了读取到的数据一样，但是不保证行数一样，也就是说解决了不可重复读的问    		题，但仍然存在幻读的问题。
+
+- **SERIALIZABLE**：在同一时间只允许一个事务修改数据。
+
+
+
+事务一个个执行，各种问题都没有了。
+
+但是负面影响就是性能很差，只能一个个的事务执行。
+
+这 4 种级别主要是数据一致性和性能的差别，一致性越好，并发性能就越差。
+
+
+
+可以这样查询当前的事务隔离级别：
+
+
+
+```sql
+select @@transaction_isolation;
+```
+
+
+
+事务内的几条 sql 要么全部成功，要么全部不成功，这样能保证数据的一致性。
+
+它的使用方式是 START TRANSACTION; COMMIT; 或者 ROLLBACK;
+
+还可以设置 SAVEPOINT，然后 ROLLBACK TO SAVEPOINT;
+
+事务还没提交的数据，别的事务能不能读取到，这就涉及到隔离级别的概念了。
+
+一般就用默认的隔离级别就行，也就是 REPEATABLE READ。
+
+基本上，只要写增删改的 sql，那都是要开事务的。

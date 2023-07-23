@@ -967,7 +967,7 @@ pm2 monit
 
 
 
-#### MySQL in Docker
+### MySQL in Docker
 
 
 
@@ -987,7 +987,7 @@ Docker 基础配置
 
 
 
-#### MYsql 小试牛刀
+### MYsql 小试牛刀
 
 
 
@@ -1049,7 +1049,7 @@ SELECT DISTINCT class FROM student;
 
 ![count](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723011658441.png)
 
-#### 聚合函数
+### 聚合函数
 
 用于对数据的统计，比如 AVG、COUNT、SUM、MIN、MAX。
 
@@ -1059,7 +1059,7 @@ SELECT avg(score) as "平均成绩" , count(*) as "人数",sum(score) as "总成
 
 ![聚合函数](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230723012453078.png)
 
-#### 字符串函数
+### 字符串函数
 
 对字符串的处理，比如 CONCAT、SUBSTR、LENGTH、UPPER、LOWER。
 
@@ -1073,7 +1073,7 @@ SELECT CONCAT('xx',name,'yy'),SUBSTR(name,2,3),LENGTH(name),UPPER('aa'),LOWER('T
 
 
 
-#### 数值函数
+### 数值函数
 
 
 
@@ -1095,7 +1095,7 @@ SELECT ROUND(1.23455,2),CETL(1.234345),FLOOR(2.3243434),ABS(-1.5454545),MOD(5,2)
 
 
 
-#### 日期函数  
+### 日期函数  
 
 
 
@@ -1109,7 +1109,7 @@ SELECT YEAR('2023-06-01 22:06:03'), MONTH('2023-06-01 22:06:03'),DAY('2023-06-01
 
 
 
-#### 条件函数
+### 条件函数
 
 
 
@@ -1130,7 +1130,7 @@ SELECT name, score, CASE WHEN score >=90 THEN '优秀' WHEN score >=60 THEN '良
 
 
 
-#### **系统函数**
+### **系统函数**
 
 用于获取系统信息，比如 VERSION、DATABASE、USER。
 
@@ -1142,7 +1142,7 @@ select VERSION(), DATABASE(), USER()
 
 
 
-#### 其他函数 
+### 其他函数 
 
 
 
@@ -1150,7 +1150,7 @@ NULLIF、COALESCE、GREATEST、LEAST。
 
 
 
-##### NULLIF
+#### NULLIF
 
 如果相等返回 null，不相等返回第一个值。
 
@@ -1164,7 +1164,7 @@ SELECT NULLIF(1,1),NULLIF(1,2);
 
 
 
-##### COALESCE
+#### COALESCE
 
 返回第一个非 null 的值：
 
@@ -1176,7 +1176,7 @@ SELECT COALESCE(null,1),COALESCE(null,null,2);
 
 
 
-##### GREATEST、LEAST
+#### GREATEST、LEAST
 
 返回几个值中最大最小的。
 
@@ -1190,7 +1190,7 @@ SELECT GREATEST(1,2,3),LEAST(1,2,3,4,5);
 
 
 
-##### **类型转换函数**
+#### **类型转换函数**
 
 
 
@@ -1232,7 +1232,7 @@ SELECT STR_TO_DATE('2023-06-01', '%Y-%m-%d');
 
 
 
-##### 总结
+#### 总结
 
 我们连接 mysql 数据库，建了张 student 表，插入了一些数据，然后用这些数据来练习了各种查询语法和函数。
 
@@ -1262,7 +1262,7 @@ sql 还可以用很多内置函数：
 
 
 
-#### 关联查询
+### 关联查询
 
 ```sql
 SELECT * FROM user JOIN id_card ON user.id = id_card.user_id;
@@ -1384,7 +1384,7 @@ DELETE FROM article WHERE id = 1;
 
 
 
-#### 子查询
+### 子查询
 
 查询学生表中成绩最高的学生的姓名和班级名称。
 
@@ -1408,7 +1408,7 @@ SELECT * FROM student2 WHERE score > (SELECT AVG(score) FROM student2);
 
 子查询还有个特有的语法 EXISTS、NOT EXISTS。
 
-
+#### EXISTS 
 
 对每个 department，在子查询里查询它所有的 employee。
 
@@ -1427,7 +1427,7 @@ SELECT name FROM department
 
 
 
-NOT EXISTS 
+#### NOT EXISTS 
 
 
 

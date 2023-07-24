@@ -72,7 +72,7 @@ AppDataSource.initialize()
         age: true,
       },
       where: {
-        id: In([4,8]),
+        id: In([4, 8]),
       },
       order: {
         age: 'ASC',
@@ -80,20 +80,64 @@ AppDataSource.initialize()
     });
     //10. 按照条件查询一条
     const userOneBy = await AppDataSource.manager.findOneBy(User, {
-        age: 23
+      age: 23,
     });
     //11. findOne 还有两个特殊的方法
     try {
-        const user = await AppDataSource.manager.findOneOrFail(User, {
-            where: {
-                id: 666
-            }
-        });
+      const user = await AppDataSource.manager.findOneOrFail(User, {
+        where: {
+          id: 666,
+        },
+      });
     } catch (error) {
-        console.log(error);
-        console.log('没找到该用户');
+      console.log(error);
+      console.log('没找到该用户');
     }
-     console.log(
+    //12. query 直接执行sql语句
+    const usersQuery = await AppDataSource.manager.query(
+      'select * from user where age in(?, ?)',
+      [21, 22],
+    );
+    console.log(usersQuery);
+    //13. query builder
+    const userQueryBuilder = await AppDataSource.manager
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .where('user.age = :age', { age: 21 })
+      .getOne();
+
+    //14. 开启事务
+    await AppDataSource.manager.transaction(async (manager) => {
+      let repositor = AppDataSource.manager.getRepository(User);
+      await repositor.save({
+        id: 4,
+        firstName: 'eee',
+        lastName: 'eee',
+        age: 20,
+      });
+
+      await repositor.save(
+        [{
+          id: 4,
+          firstName: 'eee',
+          lastName: 'eee',
+          age: 20,
+        },
+        {
+          id: 5,
+          firstName: 'eee',
+          lastName: 'eee',
+          age: 20,
+        }]
+      );
+
+      await repositor.delete(1)
+      await repositor.delete([2,3])
+
+    });
+
+    console.log(
       'Here you can setup and run express / fastify / any other framework.',
     );
   })

@@ -1966,3 +1966,23 @@ TypeORM 会自动在多的那一方添加外键，不需要通过 @JoinColumn �
 多对多关系的修改只要查出来之后修改下属性，然后 save，TypeORM 会自动去更新中间表。
 
 至此，一对一、一对多、多对多关系的 Entity 如何映射到数据库的 table，如何增删改查
+
+
+
+### Nest继承Typeorm
+
+在 Nest 里集成只是对 TyprOrm 的 api 封装了一层。
+
+使用方式是在根模块 TypeOrmModule.forRoot 传入数据源配置。
+
+然后就可以在各处注入 DataSource、EntityManager 来做增删改查了。
+
+如果想用 Repository 来简化操作，还可以在用到的模块引入 TypeOrmModule.forFeature 的动态模块，传入 Entity，会返回对应的 Repository。
+
+这样就可以在模块内注入该 Repository 来用了。
+
+它的原理是 TypeOrmModule.forRoot 对应的动态模块是全局的，导出了 dataSource、entityManager，所以才可以到处注入。
+
+而 TypeOrmModule.forFeature 则会根据吧传入 Entity 对应的 Repository 导出，这样就可以在模块内注入了。
+
+这就是 Nest 里集成 TypeOrm 的方式和实现原理。

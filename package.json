@@ -16,6 +16,7 @@
     }
   },
   "dependencies": {
-    "ioredis": "^5.2.6"
+    "ioredis": "^5.2.6",
+    "mysql2": "^3.5.2"
   }
 }

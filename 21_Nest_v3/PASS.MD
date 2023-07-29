@@ -2166,6 +2166,13 @@ HMGET hash1 key1 key2
 #HINCRBY  原来的数值中加99 (1 => 100)
 HINCRBY hash1 key1 99
 
+#HSCAN 用于迭代哈希键中的键值对
+HSCAN site 0  match "t*" count 10
+#虽然增量式迭代命令不保证每次迭代所返回的元素数量， 但我们可以使用 COUNT 选项， 对命令的行为进行一定程度上的调整。 基本上， COUNT 选项的作用就是让用户告知迭代命令， 在每次迭代中应该从数据集里返回多少元素
+
+
+
+
 
 
 ```
@@ -2227,3 +2234,27 @@ ttl dong1
 用官方 GUI 工具 RedisInsight 可以可视化的操作它，很方便。
 
 redis 几乎和 mysql 一样是后端系统的必用中间件了，它除了用来做数据库的缓存外，还可以直接作为数据存储的地方。
+
+
+
+### JWT 和 Session
+
+
+
+**session + cookie 的给 http 添加状态的方案是服务端保存 session 数据，然后把 id 放入 cookie 返回，cookie 是自动携带的，每个请求可以通过 cookie 里的 id 查找到对应的 session，从而实现请求的标识。这种方案能实现需求，但是有 CSRF、分布式 session、跨域等问题，不过都是有解决方案的。**
+
+
+
+
+
+**JWT 的方案是把状态数据保存在 header 里，每次请求需要手动携带，没有 session + cookie 方案的 CSRF、分布式、跨域的问题，但是也有安全性、性能、没法控制等问题。**
+
+
+
+**session + cookie**：把状态数据保存到服务端，session id 放到 cookie 里返回，这样每次请求会带上 cookie ，通过 id 来查找到对应的 session。这种方案有 CSRF、分布式 session、跨域的问题。
+
+**jwt**：把状态保存在 json 格式的 token 里，放到 header 中，需要手动带上，没有 cookie + session 的那些问题，但是也有安全性、性能、没法手动控制失效的问题。
+
+
+
+常用的方案基本是 session + redis、jwt + redis 这种。

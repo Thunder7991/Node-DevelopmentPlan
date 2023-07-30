@@ -2258,3 +2258,16 @@ redis 几乎和 mysql 一样是后端系统的必用中间件了，它除了用�
 
 
 常用的方案基本是 session + redis、jwt + redis 这种。
+
+
+
+**携带 jwt 需要加载 authorization 的 header 里，以 Bearer xxx 的格式，但是返回 jwt 可以放在任何地方，header、cookie 或者 body 里都可以。**
+
+
+
+session 使用的是 express 的 express-session 中间件，通过 @Session 装饰器取出来传入 controller 里。
+
+jwt 需要引入 @nestjs/jwt 包的 JwtModule，注入其中的 JwtService，然后通过 jwtService.sign 生成 token，通过 jwtService.verify 验证 token。
+
+token 放在 authorization 的 header 里。
+

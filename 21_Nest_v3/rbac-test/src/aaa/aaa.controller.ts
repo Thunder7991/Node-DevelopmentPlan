@@ -13,6 +13,7 @@ import { UpdateAaaDto } from './dto/update-aaa.dto';
 import { RequireLogin } from 'src/custom-decorator';
 
 @Controller('aaa')
+@RequireLogin()
 export class AaaController {
   constructor(private readonly aaaService: AaaService) {}
 
@@ -20,7 +21,6 @@ export class AaaController {
   create(@Body() createAaaDto: CreateAaaDto) {
     return this.aaaService.create(createAaaDto);
   }
-  @RequireLogin()
   @Get()
   findAll() {
     return this.aaaService.findAll();

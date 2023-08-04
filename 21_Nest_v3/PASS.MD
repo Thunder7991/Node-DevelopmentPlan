@@ -2358,3 +2358,102 @@ access_token 用于身份认证，refresh_token 用于刷新 token，也就是�
 然后用 axios 的 interceptors.request 给请求时自动带上 authorization 的 header。
 
 用 intercetpors.response 在响应是 401 的时候，自动访问 refreshToken 接口拿到新 token，然后再次访问失败的接口。
+
+
+
+### Docker Compose
+
+
+
+#### Mysql
+
+```shell
+docker run -d -p 3306:3306 -v E:\DockerTempVolumes:/var/lib/mysql --name mysql-container mysql
+```
+
+
+
+#### Docker
+
+```shell
+docker run -d -p 6379:6379 -v E:\DockerTempVolumes\redis:/data --name redis-container redis
+```
+
+#### Nest
+
+```shell
+docker run -d -p 3000:3000 --name nest-container eee
+```
+
+
+
+#### 查看日志
+
+```shell
+docker logs mysql-container
+docker logs redis-container
+docker logs nest-container
+```
+
+
+
+#### docker-compose.yml
+
+```shell
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    ports:
+      - '3000:3000'
+  mysql-container:
+    image: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - /Users/guang/mysql-data:/var/lib/mysql
+  redis-container:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - /Users/guang/aaa:/data
+
+```
+
+
+
+运行
+
+```shell
+docker-compose up
+```
+
+停止
+
+```shell
+docker-compose down
+
+docker-compose -f /path/to/docker-compose.yml down
+
+docker-compose stop service_name
+```
+
+
+
+docker 的方式需要手动 docker build 来构建 nest 应用的镜像。
+
+然后按顺序使用 docker run 来跑 mysql、redis、nest 容器。
+
+（要注意 nest 容器里需要使用宿主机 ip 来访问 mysql、redis 服务）
+
+而 docker compose 就只需要写一个 docker-compose.yml 文件，配置多个 service 的启动方式和 depends_on 依赖顺序。
+
+然后 docker-compose up 就可以批量按顺序启动一批容器。
+
+基本上，我们跑 Nest 项目都会依赖别的服务，所以在单台机器跑的时候都是需要用 Docker Compose 的。
+

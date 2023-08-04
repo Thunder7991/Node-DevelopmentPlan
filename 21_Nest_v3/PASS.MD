@@ -2629,3 +2629,19 @@ Docker 是支持自动重启的，可以在 docker run 的时候通过 --restart
 
 
 
+
+
+### Nginx
+
+
+
+```shell
+docker cp  nginx1:/usr/share/nginx/html E:\DockerTempVolumes\nginx
+
+docker cp  E:\DockerTempVolumes\nginx nginx1:/usr/share/nginx/html-xxx
+```
+
+
+
+
+

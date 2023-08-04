@@ -2565,3 +2565,67 @@ docker-compose up
 实现原理就是对 Network Namespace 的处理，本来是 3个独立的 Namespace，当指定了 network 桥接网络，就可以在 Namespace 下访问别的 Namespace 了。
 
 多个容器之间的通信方式，用桥接网络是最简便的。
+
+
+
+### Docker重启策略
+
+
+
+```shell
+# 命令
+docker run --name=restart-test-container restart-test:first
+
+#重启策略 --restart 
+
+docker run -d --restart=always --name=restart-test-container2 restart-test:first
+
+#pm2重启策略
+FROM node:18-alpine3.14
+
+WORKDIR /app
+
+COPY ./index.js .
+
+RUN npm install -g pm2
+
+CMD [ "pm2-runtime","/app/index.js" ]
+
+#最多重启3次
+docker run -d --restart=on-failure:3 --name=restart-test-container4 restart-test:first
+
+# unless-stopped 是除非手动停止，否则总是会重启。
+
+docker run -d --restart=unless-stopped --name=restart-test-container5 restart-test:first
+
+# 除非手动停止
+docker stop restart-test-container5
+
+#always 和 unless-stopped 区别
+#always 重启策略的容器又跑起来了，而 unless-stopped 的容器没有重启
+
+
+
+```
+
+
+
+Docker 是支持自动重启的，可以在 docker run 的时候通过 --restart 指定重启策略，或者 Docker Compose 配置文件里配置 restart。
+
+有 4 种重启策略：
+
+- no: 容器退出不自动重启（默认值）
+- always：容器退出总是自动重启，除非 docker stop。
+- on-failure：容器非正常退出才自动重启，还可以指定重启次数，如 on-failure:5
+- unless-stopped：容器退出总是自动重启，除非 docker stop
+
+重启策略为 always 的容器在 Docker Deamon 重启的时候容器也会重启，而 unless-stopped 的不会。
+
+其实我们用 PM2 也是主要用它进程崩溃的时候重启的功能，而在有了 Docker 之后，用它的必要性就不大了。
+
+当然，进程重启的速度肯定是比容器重启的速度快一些的，如果只是 Docker 部署，可以结合 pm2-runtime 来做进程的重启。
+
+绝大多数情况下，直接用 Docker 跑 node 脚本就行，不需要 PM2。
+
+
+

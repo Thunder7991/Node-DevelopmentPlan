@@ -1,0 +1,7 @@
+FROM node:18-alpine3.14
+
+WORKDIR /app
+
+COPY ./index.ts .
+
+CMD [ "node",'/app/index.js' ]

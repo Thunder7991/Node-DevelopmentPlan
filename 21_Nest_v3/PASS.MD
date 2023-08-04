@@ -2443,6 +2443,15 @@ docker-compose -f /path/to/docker-compose.yml down
 docker-compose stop service_name
 ```
 
+删除
+
+```shell
+docker rm mysql-container redis-container nest-container
+
+#用于停止并删除由 docker-compose 启动的所有容器，并且同时删除关联的镜像。
+docker-compose down --rmi all
+```
+
 
 
 docker 的方式需要手动 docker build 来构建 nest 应用的镜像。
@@ -2457,3 +2466,102 @@ docker 的方式需要手动 docker build 来构建 nest 应用的镜像。
 
 基本上，我们跑 Nest 项目都会依赖别的服务，所以在单台机器跑的时候都是需要用 Docker Compose 的。
 
+
+
+### Docker 桥接网络
+
+
+
+创建 network
+
+```shell
+docker network create common-network
+```
+
+
+
+执行 --network
+
+```shell
+docker run -d --network common-network -v E:\DockerTempVolumes:/var/lib/mysql --name mysql-container mysql
+
+docker run -d --network common-network -v E:\DockerTempVolumes\redis:/data --name redis-container redis
+
+```
+
+
+
+重新打包nest
+
+```shell
+docker build -t mmm .
+
+docker run -d --network common-network -p 3000:3000 --name nest-container mmm
+```
+
+
+
+docker-compose:
+
+```dockerfile
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    ports:
+      - "3000:3000"
+    networks:
+      - common-network
+  mysql-container:
+    image: mysql
+    volumes:
+      - E:\DockerTempVolumes:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "false"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "thunderchen"
+    networks:
+      - common-network
+
+  redis-container:
+    image: redis
+    volumes:
+      - E:\DockerTempVolumes\redis:/data
+    networks:
+      - common-network
+
+networks:
+ common-network:
+   driver: bridge
+
+```
+
+
+
+启动:
+
+```dockerfile
+docker-compose up
+```
+
+
+
+
+
+把 mysql、redis 的端口映射到宿主机，然后 nest 的容器里通过宿主机 ip 访问这两个服务的。
+
+但其实有更方便的方式，就是桥接网络。
+
+通过 docker network create 创建一个桥接网络，然后 docker run 的时候指定 --network，这样 3 个容器就可以通过容器名互相访问了。
+
+在 docker-compose.yml 配置下 networks 创建桥接网络，然后添加到不同的 service 上即可。
+
+或者不配置 networkds，docker-compose 会生成一个默认的。
+
+实现原理就是对 Network Namespace 的处理，本来是 3个独立的 Namespace，当指定了 network 桥接网络，就可以在 Namespace 下访问别的 Namespace 了。
+
+多个容器之间的通信方式，用桥接网络是最简便的。

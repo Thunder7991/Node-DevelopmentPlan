@@ -8,26 +8,25 @@ services:
       - redis-container
     ports:
       - "3000:3000"
-    networks:
-      - common-network
   mysql-container:
     image: mysql
+    ports:
+      - "3306:3306"
     volumes:
       - E:\DockerTempVolumes:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "false"
       MYSQL_USER: "root"
       MYSQL_PASSWORD: "thunderchen"
-    networks:
-      - common-network
 
   redis-container:
     image: redis
+    ports:
+      - "6379:6379"
     volumes:
       - E:\DockerTempVolumes\redis:/data
-    networks:
-      - common-network
 
-networks:
- common-network:
-   driver: bridge
+
+
+
+     

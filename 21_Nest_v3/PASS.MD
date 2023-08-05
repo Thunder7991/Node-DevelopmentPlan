@@ -2798,3 +2798,7 @@ nginx 的配置文件在 /etc/nginx/nginx.conf 里，它默认还引入了 /etc/
 nginx 反向代理可以修改请求、响应信息，比如设置 header。
 
 当有多台应用服务器的时候，可以通过 upstream 配置负载均衡，有 4 种策略：轮询、带权重的轮询、ip_hash、fair。
+
+
+
+> Nginx在线配置 [Nginx io ](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)

@@ -2643,5 +2643,158 @@ docker cp  E:\DockerTempVolumes\nginx nginx1:/usr/share/nginx/html-xxx
 
 
 
+#### 基础语法
 
 
+
+```shell
+location = /111/ {
+	default_type text/plainl
+	return 200 "111 success"
+}
+location /222 {
+	default_type text/plain;
+	return 200 $uri
+}
+location ~* ^/444/AAA.*\.html$ {
+	default_type text/plain;
+	return 200 $uri;  # Nginx 内置变量，代表请求的 URI。
+}
+```
+
+**root 和 alias 的区别就是拼接路径时是否包含匹配条件的路径。**
+
+
+
+```shell
+location /222 {
+    alias /dddd;
+}
+
+location /222 {
+    root /dddd;
+}
+
+
+```
+
+/222/xxx/yyy.html
+
+如果是 alias 配置，它会把去掉 /222 之后的部分路径拼接在后面。
+
+也就是会查找 /dddd/xxx/yyy.html 文件。
+
+如果是用 root 的配置，会把整个 uri 作为路径拼接在后面。
+
+也就是会查找 /dddd/222/xxx/yyy.html 文件。
+
+
+
+标识:
+
+^~ : 表示最高优先级
+
+
+
+#### 反向代理
+
+```shell
+ location ^~ /api {
+	proxy_set_header name thunderchen;
+	 proxy_pass http://192.168.1.7:3000;
+  }
+```
+
+上面Demo , 在本地启动端口号为3000的nest服务
+
+
+
+作用之一就是可以透明的修改请求 和 响应
+
+
+
+第二 , 可以实现负载均衡
+
+```shell
+#修改default.conf(顶层修改)
+upstream nest-server {
+	server 192.168.1.7:3001;
+	server 192.168.1.7:3002;
+}
+
+#修改配置
+location ^~ /api {
+	proxy_set_header name thunderchen;
+	#proxy_pass http://192.168.1.7:3000;
+	proxy_pass http://nest-server; #与上方命名相同
+  }
+
+```
+
+
+
+一共有 4 种负载均衡策略：
+
+- 轮询：默认方式。
+- weight：在轮询基础上增加权重，也就是轮询到的几率不同。
+- ip_hash：按照 ip 的 hash 分配，保证每个访客的请求固定访问一个服务器，解决 session 问题。
+- fair：按照响应时间来分配，这个需要安装 nginx-upstream-fair 插件。
+
+测试下 weight 和 ip_hash : weight=2，默认是 1，这样两个服务器轮询到的几率是 2 比 1。
+
+
+
+weight:
+
+```shell
+upstream nest-server {
+	server 192.168.1.7:3001;
+	server 192.168.1.7:3002 weight=2;
+}
+```
+
+![weight](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230805101553041.png)
+
+ip_hash :
+
+```shell
+upstream nest-server {
+	ip_hash;
+	server 192.168.1.7:3001;
+	server 192.168.1.7:3002;
+}
+```
+
+![ip_hash](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230805101637927.png)
+
+
+
+
+
+ docker 跑了 nginx 服务器，并使用了它的静态资源托管功能，还有动态资源的反向代理功能。
+
+nginx 的配置文件在 /etc/nginx/nginx.conf 里，它默认还引入了 /etc/nginx/conf.d 下的子配置文件。
+
+默认 html 都放在 /usr/share/nginx/html 下。
+
+我们可以通过 docker cp 来把容器内文件复制到宿主机来修改。
+
+修改 nginx 配置，在 server 里配置路由，根据不同的 url 返回不同的静态文件。
+
+有 4 种 location 语法：
+
+- location /aaa 根据前缀匹配
+- location ^~ /aaa 根据前缀匹配，优先级更高
+- location = /aaa 精准匹配
+- location ~ /aaa/.*html 正则匹配
+- location ~* /aaa/.*html 正则匹配，而且不区分大小写
+
+优先级是 精确匹配（=） > 高优先级前缀匹配（^~） > 正则匹配（～ ~*） > 普通前缀匹配
+
+除了静态资源托管外，nginx 还可以对动态资源做反向代理。
+
+也就是请求发给 nginx，由它转发给应用服务器，这一层也可以叫做网关。
+
+nginx 反向代理可以修改请求、响应信息，比如设置 header。
+
+当有多台应用服务器的时候，可以通过 upstream 配置负载均衡，有 4 种策略：轮询、带权重的轮询、ip_hash、fair。

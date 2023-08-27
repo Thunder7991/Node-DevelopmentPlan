@@ -2841,9 +2841,12 @@ nginx 有反向代理的功能，可以转发请求到应用服务器，也叫�
 
 
 
+### 分布式session
+
+![session](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230827213104991.png)
 
 
 
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230827213128265.png)
 
-
-
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20230827213157465.png)

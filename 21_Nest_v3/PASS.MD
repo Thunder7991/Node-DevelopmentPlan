@@ -2010,6 +2010,10 @@ incr 是用于递增的, 平时我们用的阅读量、点赞量等都是通过�
 
 
 ```shell
+set mykey "thunderchen"
+
+get mykey 
+
 keys '*'
 
 keys "thunder*"

@@ -2639,6 +2639,8 @@ Docker 是支持自动重启的，可以在 docker run 的时候通过 --restart
 docker cp  nginx1:/usr/share/nginx/html E:\DockerTempVolumes\nginx
 
 docker cp  E:\DockerTempVolumes\nginx nginx1:/usr/share/nginx/html-xxx
+
+docker cp E:\DockerTempVolumes\nginx nginx1:/usr/share/nginx/html-xxx
 ```
 
 
@@ -2802,3 +2804,42 @@ nginx 反向代理可以修改请求、响应信息，比如设置 header。
 
 
 > Nginx在线配置 [Nginx io ](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
+
+
+
+
+
+### nginx实现灰度系统
+
+
+
+什么是灰度系统 ?  I really don't know
+
+
+
+我问了问GPT:  旨在将新版本的软件逐渐引入生产环境,以降低风险并确保稳定性,在灰度系统中, 会有一部分用户或流量会被导流到新版本 , 而其他用户仍然使用旧版本. 这种部署方式可以用于网站 应用程序和服务的更新,以验证新版本在生产环境中的性能和稳定性。
+
+它还举了例子: 例如随机选择一小部分用户、按地理位置分配或根据用户的特定属性。灰度部署通常需要使用负载均衡、反向代理、配置管理等技术来实现。
+
+身为小白,  对于将新功能逐渐引入到生产环境甚是疑惑
+
+
+
+nginx 有反向代理的功能，可以转发请求到应用服务器，也叫做网关层。
+
+我们可以在这一层根据 cookie 里的 version 字段来决定转发请求到哪个服务。
+
+在这之前，还需要按照比例来给流量染色，也就是返回不同的 cookie。
+
+不管灰度系统做的有多复杂，底层也就是流量染色、根据标记转发流量这两部分，我们完全可以自己实现一个。
+
+
+
+
+
+
+
+
+
+
+

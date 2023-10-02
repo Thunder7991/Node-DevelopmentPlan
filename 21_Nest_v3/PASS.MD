@@ -2880,3 +2880,60 @@ swagger 是 openapi 标准的实现，可以在 url 后加个 -json 拿到对应
 绝大多数公司的接口文档都是用 swagger 来自动生成的，不然手动维护太麻烦了。
 
 而且 swagger 还可以方便的测试接口，自动添加身份认证等。
+
+
+
+### Fighting Redis Again
+
+- **string**： 可以存数字、字符串，比如存验证码就是这种类型
+- **hash**：存一个 map 的结构，比如文章的点赞数、收藏数、阅读量，就可以用 hash 存
+- **set**：存去重后的集合数据，支持交集、并集等计算，常用来实现关注关系，比如可以用交集取出互相关注的用户
+- **zset**：排序的集合，可以指定一个分数，按照分数排序。我们每天看的文章热榜、微博热榜等各种排行榜，都是 zset 做的
+- **list**：存列表数据
+- **geo**：存地理位置，支持地理位置之间的距离计算、按照半径搜索附近的位置
+
+![geo](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20231002120352730.png)
+
+
+
+添加信息
+
+```shell
+geoadd loc 14.1361 38,1155 "thunderchen" 15.22 37.22 "clearlove"
+```
+
+loc: key值
+
+thunderchen的经纬度是 14.1361 38,1155
+
+clearlove的经纬度是 15.22 37.22 
+
+
+
+计算两点之间的距离
+
+```shell
+geodist loc thunderchen clearlove
+```
+
+
+
+查找经度15 纬度37 位置的附近100KM半径和200KM半径的点:
+
+```shell
+georadius loc 15 37 100 km
+georadius loc 15 37 200 km
+```
+
+
+
+使用基于位置的功能，比如附近的充电宝、酒店，打车，附近的人等功能。
+
+这些都是基于 redis 实现的，因为 redis 有 geo 的数据结构，可以方便的计算两点的距离，计算某个半径内的点。
+
+前端部分使用地图的 sdk 分别在搜出的点处绘制 marker 就好了。
+
+geo 的底层数据结构是 zset，所以可以使用 zset 的命令。
+
+我们在 Nest 里封装了 geoadd、geopos、zrange、georadius 等 redis 命令。实现了添加点，搜索附近的点的功能。
+

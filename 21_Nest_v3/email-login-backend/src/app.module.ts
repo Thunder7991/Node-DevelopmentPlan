@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'email_login_test',
       synchronize: true,
       logging: true,
-      entities: [],
+      entities: [User],
       poolSize: 10,
       connectorPackage: 'mysql2',
       extra: {

@@ -4,10 +4,17 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { EmailModule } from './email/email.module';
+import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
     UserModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: 'src/.env',
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -24,6 +31,8 @@ import { User } from './user/entities/user.entity';
         authPlugin: 'sha256_password',
       },
     }),
+    EmailModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

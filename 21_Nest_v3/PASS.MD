@@ -2956,3 +2956,64 @@ node 分别有 nodemailer 包和 imap 包用来支持收发邮件的协议。
 能够写代码来收发邮件之后，就可以做很多自动化的事情了：
 
 比如定时自动发一些邮件，内容是从数据库查出来的，比如自动拉取邮件，根据一定的规则来保存邮件和附件内容等。
+
+
+
+#### 邮箱验证
+
+主要是注意全局配置env文件方法
+
+```js
+// 安装
+npm install --save @nestjs/config
+//app.moudle导入
+imports:[
+    ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: 'src/.env'
+})
+]
+
+//编写env
+...
+
+//注入到Service
+import { ConfigService } from '@nestjs/config';
+constructor(private configService: ConfigService) {
+      this.transporter = createTransport({
+          host: "smtp.qq.com",
+          port: 587,
+          secure: false,
+          auth: {
+              user: this.configService.get('email_user'),
+              pass: this.configService.get('email_password')
+          },
+      });
+    }
+
+//修改nest-cli.json文件 如果你用到了 .env 文件或者 yaml 等文件来配置，需要在 nest-cli.json 里配置下 assets 和 watchAssets。
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "watchAssets": true,
+    "assets": ["*.env"]
+  }
+//注意.env需要复制到src目录下才可以打包到dist文件夹中
+
+
+```
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20231003221154539.png)
+
+用户填入邮箱地址，点击发送验证码，后端会生成验证码，发送邮件。并且还要把这个验证码存入 redis，以用户邮箱地址为 key。
+
+之后用户输入验证码，点击登录。
+
+后端根据邮箱地址去 redis 中查询下验证码，和用户传过来的验证码比对下，如果一致，就从 mysql 数据库中查询该用户的信息，放入 jwt 中返回。
+
+
+
+综合用到了 mysql、redis、typeorm、nodemailer 等技术。
+
+并且使用 @nestjs/config 包的 ConfigModule 来封装配置。
+
+要注意的是，如果用了 .env 文件，需要保证它在 src 下，并且要在 nest-cli.json 里配置 assets 和 watchAssets，不然 build 的时候不会复制到 dist 下。

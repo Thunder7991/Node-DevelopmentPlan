@@ -1,20 +1,38 @@
 import React from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
-const login = (values) => {
-  console.log('Success:', values);
+const login = async (values) => {
+  const res = await axios.post('http://localhost:3001/user/login', {
+    email: values.email,
+    code: values.code
+  });
+  if (res.data === 'success') {
+    message.success('登录成功');
+  } else {
+    message.error(res.data.message);
+  }
 };
 
-const sendEmailCode =async  () => {
-  const res = await axios.get("http://localhost:3001")
-  console.log('send email code')
-  console.log(res);
-}
 
- const App = () => (
- 
-  <div style={{ width: '500px', margin: '100px auto' }}>
-    <Form onFinish={login}>
+const App = () => {
+
+  const [form] = Form.useForm();
+  const sendEmailCode = async () => {
+    const email = form.getFieldValue('email')
+    if (!email) {
+      message.error('请输入邮箱地址')
+      return
+    }
+    const res = await axios.get('http://localhost:3001/email/code', {
+      params: {
+        address: email
+      }
+    });
+    message.info(res.data);
+  }
+
+  return <div style={{ width: '500px', margin: '100px auto' }}>
+    <Form onFinish={login} form={form}>
 
       <Form.Item
         label="邮箱"
@@ -52,6 +70,6 @@ const sendEmailCode =async  () => {
 
     </Form>
   </div>
- )
+}
 
 export default App

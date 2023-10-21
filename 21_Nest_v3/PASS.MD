@@ -3017,3 +3017,15 @@ constructor(private configService: ConfigService) {
 并且使用 @nestjs/config 包的 ConfigModule 来封装配置。
 
 要注意的是，如果用了 .env 文件，需要保证它在 src 下，并且要在 nest-cli.json 里配置 assets 和 watchAssets，不然 build 的时候不会复制到 dist 下。
+
+
+
+### 定时任务/redis阅读数量统计
+
+
+
+redis + 定时任务实现了阅读量计数的功能。
+
+因为阅读是个高频操作，所以我们查出数据后存在 redis里，之后一直访问 redis 的数据，然后通过定时任务在凌晨 4 点把最新数据写入数据库。
+
+并且为了统计真实的用户阅读量，我们在 redis 存储了用户看了哪篇文章的标识，10 分钟后过期。

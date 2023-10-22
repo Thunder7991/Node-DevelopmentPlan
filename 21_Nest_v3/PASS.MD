@@ -3043,3 +3043,21 @@ redis + 定时任务实现了阅读量计数的功能。
 此外，你还可以注入 SchedulerRegistery 来对定时任务做增删改查。
 
 定时任务里可以注入 service，来定时执行一些逻辑，在特定业务场景下是很有用的
+
+
+
+### SSE
+
+服务端实时推送数据，除了用 WebSocket 外，还可以用 HTTP 的 Server Sent Event。
+
+只要 http 返回 Content-Type 为 text/event-stream 的 header，就可以通过 stream 的方式多次返回消息了。
+
+它传输的是 json 格式的内容，可以用来传输文本或者二进制内容。
+
+我们通过 Nest 实现了 sse 的接口，用 @Sse 装饰器标识方法，然后返回 Observe 对象就可以了。内部可以通过 observer.next 随时返回数据。
+
+前端使用 EventSource 的 onmessage 来接收消息。
+
+这个 api 的兼容性很好，除了 ie 外可以放心的用。
+
+它的应用场景有很多，比如站内信、构建日志实时展示、chatgpt 的消息返回等。

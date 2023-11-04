@@ -16,8 +16,11 @@
     }
   },
   "dependencies": {
+    "@nestjs/jwt": "^10.1.1",
     "@nestjs/swagger": "^7.1.12",
+    "@types/qrcode": "^1.5.4",
     "ioredis": "^5.2.6",
+    "qrcode": "^1.5.3",
     "redis": "^4.6.8"
   }
 }

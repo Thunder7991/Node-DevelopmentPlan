@@ -3061,3 +3061,21 @@ redis + 定时任务实现了阅读量计数的功能。
 这个 api 的兼容性很好，除了 ie 外可以放心的用。
 
 它的应用场景有很多，比如站内信、构建日志实时展示、chatgpt 的消息返回等。
+
+
+
+### 二维码登录
+
+扫码登录流程
+
+![](C:\Users\85352\AppData\Roaming\Typora\typora-user-images\image-20231104223317606.png)
+
+pc 端生成二维码，然后不断轮询二维码状态。
+
+APP 里扫码拿到 qrcode_id，然后分别调用 scan、confirm、cancel 来修改二维码状态。
+
+并且登录之后会把 token 带过去。
+
+在 redis 里保存着二维码的状态和用户信息，然后这边确认之后，另一边就可以用 userInfo 生成 jwt 的 token，从而实现登录。
+
+这就是扫码登录的实现原理。

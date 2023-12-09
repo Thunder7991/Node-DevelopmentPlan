@@ -12,7 +12,7 @@ async function bootstrap() {
   //全局启用响应拦截器
   app.useGlobalInterceptors(new FormatResponseInterceptor());
   //全局启用logger
-  app.useGlobalInterceptors(new InvokeRecordInterceptor())
+  app.useGlobalInterceptors(new InvokeRecordInterceptor());
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get('nest_server_port'));

@@ -5,6 +5,9 @@ import {
   Get,
   Query,
   UnauthorizedException,
+  ParseIntPipe,
+  BadRequestException,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Body } from '@nestjs/common/decorators';
@@ -18,6 +21,7 @@ import { RequireLogin, UserInfo } from 'src/custom.decorator';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/udpate-user.dto';
+import { generateParseIntPipe } from '../utils';
 
 @Controller('user')
 export class UserController {
@@ -255,6 +259,10 @@ export class UserController {
     return '发送成功';
   }
 
+  /**
+   * @description: 更新用户信息
+   * @return {*}
+   */
   @Post(['update', 'admin/update'])
   @RequireLogin()
   async update(
@@ -262,5 +270,37 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.userService.update(userId, updateUserDto);
+  }
+
+  /**
+   * @description: 冻结用户
+   * @param {*} Query
+   * @return {*}
+   */
+  @Get('freeze')
+  async freeze(@Query('id') userId: number) {
+    await this.userService.freezeUserById(userId);
+    return 'success';
+  }
+
+  /**
+   * @description: 获取用户列表
+   * @return {*}
+   */
+  @Get('list')
+  async list(
+    @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
+    pageNo: number,
+    @Query(
+      'pageSize',
+      new DefaultValuePipe(2),
+      generateParseIntPipe('pageSize'),
+    )
+    pageSize: number,
+    @Query('username') username: string,
+    @Query('nickName') nickName: string,
+    @Query('email') email: string,
+  ) {
+    return await this.userService.findUsers(username, nickName, email, pageNo, pageSize);
   }
 }

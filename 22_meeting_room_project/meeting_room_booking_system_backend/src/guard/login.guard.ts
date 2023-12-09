@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Permission } from 'src/user/entities/permission.entity';
+import { UnLoginException } from 'src/unlogin.filter';
 
 // 其实现在 controller 里有很多重复代码，比如多次生成 jwt 的代码，这个大家可以自己重构下，抽一个方法出来。
 
@@ -53,6 +54,7 @@ export class LoginGuard implements CanActivate {
 
     if (!authorization) {
       throw new UnauthorizedException('用户未登录');
+      // throw new UnLoginException()
     }
 
     try {
@@ -68,6 +70,7 @@ export class LoginGuard implements CanActivate {
       return true;
     } catch (e) {
       throw new UnauthorizedException('token 失效，请重新登录');
+      // throw new UnLoginException()
     }
   }
 }

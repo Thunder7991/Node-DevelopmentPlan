@@ -17,6 +17,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { LoginUserVo } from './vo/login-user.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/udpate-user.dto';
+import { UserListVo } from './vo/user-list.vo';
 
 @Injectable()
 export class UserService {
@@ -51,7 +52,7 @@ export class UserService {
     if (foundUser) {
       throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST);
     }
-    console.log(42, User);
+
     const newUser = new User();
     newUser.username = user.username;
     newUser.password = md5(user.password);
@@ -304,9 +305,10 @@ export class UserService {
       where: condition,
     });
 
-    return {
-      users,
-      totalCount,
-    };
+    const vo = new UserListVo();
+
+    vo.users = users;
+    vo.totalCount = totalCount;
+    return vo;
   }
 }

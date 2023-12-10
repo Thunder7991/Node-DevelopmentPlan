@@ -6,6 +6,7 @@ import { FormatResponseInterceptor } from './format-response.interceptor';
 import { InvokeRecordInterceptor } from './invoke-record.interceptor';
 import { UnloginFilter } from './unlogin.filter';
 import { CustomExceptionFilter } from './custom-exception.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,19 @@ async function bootstrap() {
 
   //自定义过滤器
   app.useGlobalFilters(new CustomExceptionFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle('会议室预订系统')
+    .setDescription('API 接口文档')
+    .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      description: 'Basic Auth',
+    })
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  console.log(document);
+  SwaggerModule.setup('api-docs', app, document);
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get('nest_server_port'));

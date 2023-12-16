@@ -1,7 +1,7 @@
 /*
  * @Author: thunderchen
  * @Date: 2023-12-09 14:41:36
- * @LastEditTime: 2023-12-10 22:13:34
+ * @LastEditTime: 2023-12-16 20:16:02
  * @email: 853524319@qq.com
  * @Description: 密码 邮箱 验证码 校验
  */
@@ -10,6 +10,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 export class UpdateUserPasswordDto {
+  @IsNotEmpty({ message: '用户名不能为空' })
+  @ApiProperty()
+  username:string;
+  
   @IsNotEmpty({ message: '密码不能为空' })
   @MinLength(6, { message: '密码长度不能小于6位' })
   @ApiProperty()

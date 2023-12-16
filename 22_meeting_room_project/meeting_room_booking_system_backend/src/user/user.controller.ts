@@ -10,8 +10,10 @@ import {
   DefaultValuePipe,
   HttpStatus,
 } from '@nestjs/common';
+import * as path from 'path';
+
 import { UserService } from './user.service';
-import { Body } from '@nestjs/common/decorators';
+import { Body, UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
 import { RegisterUserDto } from './RegisterUserDto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
@@ -33,6 +35,8 @@ import {
 import { LoginUserVo } from './vo/login-user.vo';
 import { RefreshTokenVo } from './vo/refresh-token.vo';
 import { UserListVo } from './vo/user-list.vo';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage } from 'src/my-file-storage';
 
 @ApiTags('用户管理模块') //添加模块名称
 @Controller('user')
@@ -126,6 +130,7 @@ export class UserController {
         userId: vo.userInfo.id,
         username: vo.userInfo.username,
         roles: vo.userInfo.roles,
+        email: vo.userInfo.email,
         permissions: vo.userInfo.permissions,
       },
       {
@@ -153,6 +158,7 @@ export class UserController {
       {
         userId: vo.userInfo.id,
         username: vo.userInfo.username,
+        email: vo.userInfo.email,
         roles: vo.userInfo.roles,
         permissions: vo.userInfo.permissions,
       },
@@ -204,6 +210,7 @@ export class UserController {
         {
           userId: user.id,
           username: user.username,
+          email: user.email,
           roles: user.roles,
           permissions: user.permissions,
         },
@@ -244,6 +251,7 @@ export class UserController {
         {
           userId: user.id,
           username: user.username,
+          email: user.email,
           roles: user.roles,
           permissions: user.permissions,
         },
@@ -303,7 +311,7 @@ export class UserController {
    * @description: update password
    * @return {*}
    */
-  @ApiBearerAuth()
+
   @ApiBody({
     type: UpdateUserPasswordDto,
   })
@@ -312,12 +320,8 @@ export class UserController {
     description: '验证码已失效/不正确',
   })
   @Post(['update_password', 'admin/update_password'])
-  @RequireLogin()
-  async updatePassword(
-    @UserInfo('userId') userId: number,
-    @Body() passwordDto: UpdateUserPasswordDto,
-  ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+  async updatePassword(@Body() passwordDto: UpdateUserPasswordDto) {
+    return await this.userService.updatePassword(passwordDto);
   }
 
   /**
@@ -325,7 +329,7 @@ export class UserController {
    * @param {*} Query
    * @return {*}
    */
-  @ApiBearerAuth()
+
   @ApiQuery({
     name: 'address',
     type: String,
@@ -335,11 +339,9 @@ export class UserController {
     type: String,
     description: '发送成功',
   })
-  @RequireLogin()
   @Get('update_password_captcha')
   async updatePasswordCaptcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
-
     await this.redisService.set(
       `update_password_captcha_${address}`,
       code,
@@ -351,6 +353,29 @@ export class UserController {
       subject: '更改密码验证码',
       html: `<p>你的更改密码验证码是 ${code}</p>`,
     });
+    return '发送成功';
+  }
+
+  @ApiBearerAuth()
+  @ApiResponse({
+    type: String,
+    description: '发送成功',
+  })
+  @RequireLogin()
+  @Get('update/captcha')
+  async updateCaptcha(@UserInfo('email') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+    await this.redisService.set(
+      `update_user_captcha_${address}`,
+      code,
+      10 * 60,
+    );
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改用户信息验证码',
+      html: `<p>你的验证码是 ${code}</p>`,
+    });
+
     return '发送成功';
   }
 
@@ -454,5 +479,29 @@ export class UserController {
       pageNo,
       pageSize,
     );
+  }
+
+  //上传图片接口
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: 'uploads',
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 3,
+      },
+      fileFilter(req, file, callback) {
+        const extname = path.extname(file.originalname);
+        if (['.png', '.jpg', '.gif'].includes(extname)) {
+          callback(null, true);
+        } else {
+          callback(new BadRequestException('只能上传图片'), false);
+        }
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log('file', file);
+    return file.path;
   }
 }

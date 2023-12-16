@@ -49,8 +49,8 @@ const routes = [
         element: <UpdateInfo></UpdateInfo>
       },
       {
-        path: 'bbb',
-        element: <div>bbb</div>
+        path: 'update_password',
+        element: <UpdatePassword></UpdatePassword>
       }
     ]
 

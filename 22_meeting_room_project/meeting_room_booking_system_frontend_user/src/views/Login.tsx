@@ -32,7 +32,7 @@ export default function Login() {
             localStorage.setItem('user_info', JSON.stringify(data.userInfo));
 
             setTimeout(() => {
-                navigate('/')
+                navigate('/index')
             }, 1000)
         } else {
             message.error(res.data.data || '系统繁忙，请稍后再试');

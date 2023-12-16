@@ -6,7 +6,7 @@ export function Index() {
     return <div id="index-container">
         <div className="header">
             <h1>会议室预定系统</h1>
-            <Link to={'/update_info'}>
+            <Link to={'update_info'}>
 
                 <UserOutlined className="icon" />
 

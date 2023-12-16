@@ -31,11 +31,11 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     async (error) => {
+        //请求未发送成功
         if(!error.response) {
             return Promise.reject(error);
         }
         let { data, config } = error.response;
-
         if(refreshing) {
             return new Promise((resolve) => {
                 queue.push({

@@ -78,7 +78,7 @@ export function UpdateInfo() {
                     { required: true, message: '请输入头像!' },
                 ]}
             >
-                
+
                 <HeadPicUpload></HeadPicUpload>
             </Form.Item>
 
@@ -119,7 +119,7 @@ export function UpdateInfo() {
                 label=" "
             >
                 <Button className='btn' type="primary" htmlType="submit">
-                    修改密码
+                    修改
                 </Button>
             </Form.Item>
         </Form>

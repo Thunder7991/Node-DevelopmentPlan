@@ -36,6 +36,9 @@ async function bootstrap() {
   console.log(document);
   SwaggerModule.setup('api-docs', app, document);
 
+  //添加跨域
+  app.enableCors();
+
   const configService = app.get(ConfigService);
   await app.listen(configService.get('nest_server_port'));
 }

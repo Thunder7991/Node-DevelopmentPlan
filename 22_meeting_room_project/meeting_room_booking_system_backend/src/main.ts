@@ -38,13 +38,14 @@ async function bootstrap() {
     })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  console.log(document);
   SwaggerModule.setup('api-docs', app, document);
 
   //添加跨域
   app.enableCors();
 
   const configService = app.get(ConfigService);
+  console.log(configService.get('nest_server_port'));
+  
   await app.listen(configService.get('nest_server_port'));
 }
 bootstrap();

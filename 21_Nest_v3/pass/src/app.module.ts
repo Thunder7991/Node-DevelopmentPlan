@@ -52,7 +52,13 @@ import { TestloggermoduleModule } from './testloggermodule/testloggermodule.modu
   controllers: [AppController],
   // providers: [AppService],
   providers: [
+    //导入简写
     AppService,
+    //导入完整写法
+    // {
+    //   provide: AppService, // 指定token
+    //   useClass: AppService //指定对象的类
+    // }
     {
       provide: 'app_service',
       useClass: AppService,

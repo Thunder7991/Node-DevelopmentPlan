@@ -59,8 +59,10 @@ import { MyFileValidator } from './customFileValidator/customFileValidator';
 @SetMetadata('rolesArr', ['admin'])
 export class AppController {
   private logger = new Logger();
+  @Inject(AppService)
+  private readonly appService: AppService;
   constructor(
-    @Inject('app_service') private readonly appService: AppService,
+    // @Inject('app_service') private readonly appService: AppService,
     // private readonly appService: AppService,
     @Inject('person') private readonly person: { name: string; age: number },
     @Inject('person2')

@@ -22,6 +22,10 @@ const routes = [
             element: <UserManage/>
           }
         ]
+      },
+      {
+       path:'/user',
+      //  element: Modi
       }
     ]
   },
@@ -30,7 +34,7 @@ const routes = [
     element: <Login />,
   }
 ];
-const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

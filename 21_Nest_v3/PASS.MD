@@ -1,3 +1,70 @@
+### 掌握Nest Cli
+
+nest 在 @nestjs/cli 包里提供了 nest 命令，它可以用来做很多事情：
+
+* 生成项目结构和各种代码
+* 编译代码
+* 监听文件变动自动编译
+* 打印项目依赖信息
+* 也就是这些子命令：
+
+* nest new 快速创建项目
+* nest generate 快速生成各种代码
+* nest build 使用 tsc 或者 webpack 构建代码
+* nest start 启动开发服务，支持 watch 和调试
+* nest info 打印 node、npm、nest 包的依赖版本
+
+### 5种HTTP数据传输方式
+
+* url param
+
+  * `http://guang.zxg/person/1111  `
+
+* query
+
+  * query 是 url 中 ? 后的字符串，需要做 url encode。
+
+* form urlencoded
+
+  * 通过body传递数据，设置`content-type:application/x-www-form-urlencoded`
+
+* json
+
+  * 通过指定`content-type:application/json`
+
+* form data
+
+  * `content-type:mulitipart/form-data`
+
+  
+
+  其中前两种是 url 中的：
+
+  - **url param**： url 中的参数，Nest 中使用 @Param 来取
+  - **query**：url 中 ? 后的字符串，Nest 中使用 @Query 来取
+
+  后三种是 body 中的：
+
+  - **form urlencoded**： 类似 query 字符串，只不过是放在 body 中。Nest 中使用 @Body 来取，axios 中需要指定 content type 为 `application/x-www-form-urlencoded`，并且对数据用 qs 或者 query-string 库做 url encode
+  - **json**： json 格式的数据。Nest 中使用 @Body 来取，axios 中不需要单独指定 content type，axios 内部会处理。
+  - **form data**：通过 ----- 作为 boundary 分隔的数据。主要用于传输文件，Nest 中要使用 FilesInterceptor 来处理其中的 binary 字段，用 @UseInterceptors 来启用，其余字段用 @Body 来取。axios 中需要指定 content type 为 `multipart/form-data`，并且用 FormData 对象来封装传输的内容。
+
+
+
+### IOC控制反转
+
+后端系统有很多的对象，这些对象之间的关系错综复杂，如果手动创建并组装对象比较麻烦，所以后端框架一般都提供了 IoC 机制。
+
+IoC 机制是在 class 上标识哪些是可以被注入的，它的依赖是什么，然后从入口开始扫描这些对象和依赖，自动创建和组装对象。
+
+Nest 里通过 @Controller 声明可以被注入的 controller，通过 @Injectable 声明可以被注入也可以注入别的对象的 provider，然后在 @Module 声明的模块里引入。
+
+并且 Nest 还提供了 Module 和 Module 之间的 import，可以引入别的模块的 provider 来注入。
+
+虽然 Nest 这套实现了 IoC 的模块机制看起来繁琐，但是却解决了后端系统的对象依赖关系错综复杂的痛点问题。
+
+
+
 ### NestJS 创建一个服务是非常快的
 
 * 安装 @nestjs/cli，使用 nest new xxx 创建一个 Nest 的项目，
@@ -190,6 +257,22 @@ nest start --debug
 > 需要注意的是，此时项目必须和.vscode文件在同一目录下
 
 
+
+### 使用多种Provider
+
+一般情况下，provider 是通过 @Injectable 声明，然后在 @Module 的 providers 数组里注册的 class。
+
+默认的 token 就是 class，这样不用使用 @Inject 来指定注入的 token。
+
+但也可以用字符串类型的 token，不过注入的时候要用 @Inject 单独指定。
+
+除了可以用 useClass 指定注入的 class，还可以用 useValue 直接指定注入的对象。
+
+如果想动态生成对象，可以使用 useFactory，它的参数也注入 IOC 容器中的对象，然后动态返回 provider 的对象。
+
+如果想起别名，可以用 useExisting 给已有的 token，指定一个新 token。
+
+灵活运用这些 provider 类型，就可以利用 Nest 的 IOC 容器中注入任何对象。
 
 ### AOP框架
 

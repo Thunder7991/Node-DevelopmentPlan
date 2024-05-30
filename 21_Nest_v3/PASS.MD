@@ -274,6 +274,29 @@ nest start --debug
 
 灵活运用这些 provider 类型，就可以利用 Nest 的 IOC 容器中注入任何对象。
 
+
+
+### 全局模块和生命周期
+
+模块可以通过 @Global 声明为全局的，这样它 exports 的 provider 就可以在各处使用了，不需要 imports。
+
+![img](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b84285b51b5441ef9759438bc302fbf3~tplv-k3u1fbpfcp-jj-mark:2079:0:0:0:q75.awebp)
+
+![img](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7882084092c4259943880eb14c9405d~tplv-k3u1fbpfcp-jj-mark:2079:0:0:0:q75.awebp)
+
+可以在其中做一些初始化、销毁的逻辑，比如 onApplicationShutwon 里通过 moduleRef.get 取出一些 provider，执行关闭连接等销毁逻辑。
+
+```javascript
+ onApplicationShutdown() {
+    const cccService = this.moduleRef.get<CccService>(CccService);
+    console.log('--------------------------', cccService.findAll());
+
+    console.log('CccModule onApplicationShutdown');
+  }
+```
+
+
+
 ### AOP框架
 
 **AOP 的好处是可以把一些通用逻辑分离到切面中，保持业务逻辑的纯粹性，这样切面逻辑可以复用，还可以动态的增删。**

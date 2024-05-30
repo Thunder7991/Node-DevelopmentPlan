@@ -7,8 +7,8 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
-import { AaaModule } from './aaa/aaa.module';
-import { BbbModule } from './bbb/bbb.module';
+import { AaaModule } from './lifecycleaaa/aaa.module';
+import { BbbModule } from './lifecyclebbb/bbb.module';
 import { CccModule } from './ccc/ccc.module';
 import { DddModule } from './ddd/ddd.module';
 import { ModuleaModule } from './modulea/modulea.module';
@@ -47,7 +47,7 @@ import { TestloggermoduleModule } from './testloggermodule/testloggermodule.modu
     Logger2Module.register({
       xxx: 1,
       yyy: 2,
-    }),
+    })
   ],
   controllers: [AppController],
   // providers: [AppService],

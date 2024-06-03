@@ -299,6 +299,10 @@ nest start --debug
 
 ### AOP框架
 
+
+
+MVC 是 Model View Controller 的简写。MVC 架构下，请求会先发送给 Controller，由它调度 Model 层的 Service 来完成业务逻辑，然后返回对应的 View。
+
 **AOP 的好处是可以把一些通用逻辑分离到切面中，保持业务逻辑的纯粹性，这样切面逻辑可以复用，还可以动态的增删。**
 
 
@@ -3208,3 +3212,4 @@ filter 可以通过 @UseFilters 加在 handler 或者 controller 上，也可以
 
 
 
+​	

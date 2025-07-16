@@ -47,7 +47,7 @@ import { TestloggermoduleModule } from './testloggermodule/testloggermodule.modu
     Logger2Module.register({
       xxx: 1,
       yyy: 2,
-    })
+    }),
   ],
   controllers: [AppController],
   // providers: [AppService],
